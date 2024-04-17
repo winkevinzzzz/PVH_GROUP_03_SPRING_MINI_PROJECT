@@ -2,12 +2,10 @@ package org.example.spring_boot_mini_project.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
-import org.example.spring_boot_mini_project.model.dto.response.ApiResponse;
 import org.example.spring_boot_mini_project.model.dto.response.FileResponse;
 import org.example.spring_boot_mini_project.service.FileService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
