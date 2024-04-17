@@ -1,17 +1,17 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import org.example.spring_boot_mini_project.model.Expense;
 import org.example.spring_boot_mini_project.model.dto.request.ExpenseRequest;
 import org.example.spring_boot_mini_project.repository.ExpenseRepository;
 import org.example.spring_boot_mini_project.service.ExpenseService;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,22 +24,17 @@ public class ExpenseServiceImpl implements ExpenseService {
         // Create a new Expense object
         Expense expense = new Expense();
 
-        // Set values from ExpenseRequest to the Expense object
         expense.setAmount(expenseRequest.getAmount());
         expense.setDescription(expenseRequest.getDescription());
-        expense.setExpense_date(expenseRequest.getExpenseDate());
-        expense.setCategory_id(expenseRequest.getCategoryId());
-
-        // Call the repository method to create the expense
-        expenseRepository.createExpense(expenseRequest);
-
-        // Return the created Expense object
+        expense.setDate(expenseRequest.getDate());
+        expense.setCategory_id(expenseRequest.getCategory_id());
+        expenseRepository.createExpense(expense);
         return expense;
     }
 
     @Override
-    public Expense getExpenseById(UUID id) {
-        return null;
+    public Expense getExpenseById(Long id) {
+        return expenseRepository.getExpenseById(id);
     }
 
     @Override
@@ -61,5 +56,4 @@ public class ExpenseServiceImpl implements ExpenseService {
     public Expense createExpense(Expense expense) {
         return null;
     }
-
 }

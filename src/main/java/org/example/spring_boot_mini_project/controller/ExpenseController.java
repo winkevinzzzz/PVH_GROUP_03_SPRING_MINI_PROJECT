@@ -1,22 +1,19 @@
 package org.example.spring_boot_mini_project.controller;
 
-
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.*;
+
 import lombok.RequiredArgsConstructor;
-import org.example.spring_boot_mini_project.model.Expense;
-import org.example.spring_boot_mini_project.model.dto.request.ExpenseRequest;
-import org.example.spring_boot_mini_project.service.ExpenseService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.example.spring_boot_mini_project.model.Expense;
+import org.example.spring_boot_mini_project.model.dto.request.ExpenseRequest;
+import org.example.spring_boot_mini_project.service.ExpenseService;
 
 @RestController
 @RequestMapping("/api/v1/expenses")
@@ -26,7 +23,7 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> addExpense(@Valid @RequestBody ExpenseRequest expenseRequest) {
+    public ResponseEntity<Map<String, Object>> createExpense(@Valid @RequestBody ExpenseRequest expenseRequest) {
         try {
             Expense savedExpense = expenseService.createExpense(expenseRequest);
 
@@ -42,4 +39,23 @@ public class ExpenseController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getExpenseById(@PathVariable Long id) {
+        try {
+            Expense expense = expenseService.getExpenseById(id);
+            if (expense != null) {
+                Map<String, Object> response = new LinkedHashMap<>();
+                response.put("message", "The expense has been successfully found.");
+                response.put("payload", expense);
+                response.put("status", "OK");
+                response.put("time", LocalDateTime.now());
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
