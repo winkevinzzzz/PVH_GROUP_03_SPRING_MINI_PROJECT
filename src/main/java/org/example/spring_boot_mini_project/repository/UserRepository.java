@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @Mapper
 public interface UserRepository {
+
     @Select("""
            SELECT * FROM users
            WHERE user_id = #{id}
@@ -22,10 +23,11 @@ public interface UserRepository {
            """)
     User findByEmail(String email);
     @Result(property = "profileImage", column = "profile_image")
+    @Result(property = "userId", column = "user_id")
     @Select("""
            INSERT INTO users (email, password, profile_image)
            VALUES ( #{u.email}, #{u.password}, #{u.profileImage})
            Returning *
            """)
-    String insert(@Param("u") AppUserRequest User);
+    User insert(@Param("u") AppUserRequest User);
 }
