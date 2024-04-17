@@ -58,4 +58,14 @@ public class GlobalExceptionHandling {
         problemDetail.setProperty("errors", errors);
         return problemDetail;
     }
+    @ExceptionHandler(PasswordException.class)
+    public ProblemDetail pwdException(FindNotFoundException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        problemDetail.setTitle("Bad Request");
+        problemDetail.setStatus(404);
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+
 }
