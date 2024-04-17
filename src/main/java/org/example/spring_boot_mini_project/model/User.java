@@ -1,9 +1,10 @@
 package org.example.spring_boot_mini_project.model;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.UUID;
 
@@ -12,7 +13,10 @@ import java.util.UUID;
 @NoArgsConstructor
 public class User {
     private UUID userId;
+    @Email
     private String email;
-    private BCryptPasswordEncoder password;
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    private String password;
+    private String confirmPassword;
     private String profileImage;
 }
