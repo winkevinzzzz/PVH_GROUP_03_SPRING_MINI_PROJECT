@@ -67,7 +67,7 @@ public class GlobalExceptionHandling {
         return problemDetail;
     }
     @ExceptionHandler(PasswordException.class)
-    public ProblemDetail pwdException(FindNotFoundException e) {
+    public ProblemDetail pwdException(PasswordException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
         problemDetail.setTitle("Bad Request");
         problemDetail.setStatus(404);

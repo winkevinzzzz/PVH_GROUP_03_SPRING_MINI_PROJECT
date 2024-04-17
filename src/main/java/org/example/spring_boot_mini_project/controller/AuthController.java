@@ -31,15 +31,6 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }
-    @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/users")
-    public ResponseEntity<?> getAllUser(){
-        List<User> userDTOS =  userService.getAllUser();
-        ApiResponse<List<User>> response =  ApiResponse.<List<User>>builder()
-                .message("Successfully fetched all users")
-                .status(HttpStatus.OK).code(200).payload(userDTOS).build();
-        return ResponseEntity.ok(response);
-    }
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest)
     {
