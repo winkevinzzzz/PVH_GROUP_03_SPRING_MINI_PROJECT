@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,7 +43,10 @@ public class UserServiceImpl implements UserService {
 //        if (userRepository.existsByEmail(appUserRequest.getEmail())) {
 //            throw new IllegalArgumentException("Email address already exists");
 //        }
-
+        Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(appUserRequest.getEmail()));
+        if (existingUser.isPresent()) {
+            throw new EmailSendingException("Email address already exists");
+        }
         String otpCode = otpService.generateOtp();
 
         try {
