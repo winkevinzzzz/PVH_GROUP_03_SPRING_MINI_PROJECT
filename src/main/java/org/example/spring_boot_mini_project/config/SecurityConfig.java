@@ -46,8 +46,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auths/**", "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html").permitAll()
-//                        .requestMatchers("/user").hasRole("USER")
-//                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/files/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntrypoint))
