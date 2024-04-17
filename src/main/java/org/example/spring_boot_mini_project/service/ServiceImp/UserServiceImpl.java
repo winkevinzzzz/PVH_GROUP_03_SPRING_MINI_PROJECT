@@ -32,14 +32,14 @@ public class UserServiceImpl implements UserService {
         {
 
         }
-        String userId =userRepository.insert(appUserRequest);
+        User userId =userRepository.insert(appUserRequest);
         // set password
-        UUID uuid;
-        uuid=UUID.fromString(userId);
+
         appUserRequest.setPassword(appUserRequest.getPassword());
-        User user =userRepository.findById(uuid);
+        User user =userRepository.findById(userId.getUserId());
+        System.out.println(userId.getUserId());
         return modelMapper.map(user,User.class);
-        //return  null;
+
     }
 
     @Override
