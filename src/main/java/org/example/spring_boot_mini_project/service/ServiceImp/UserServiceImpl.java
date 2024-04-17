@@ -5,6 +5,7 @@ import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
+import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
 import org.example.spring_boot_mini_project.repository.UserRepository;
 import org.example.spring_boot_mini_project.service.OtpService;
 import org.example.spring_boot_mini_project.service.UserService;
@@ -39,27 +40,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(AppUserRequest appUserRequest) throws EmailSendingException {
 
-        // Check for existing email (optional)
-//        if (userRepository.existsByEmail(appUserRequest.getEmail())) {
-//            throw new IllegalArgumentException("Email address already exists");
-//        }
+        // Check for existing email
         Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(appUserRequest.getEmail()));
         if (existingUser.isPresent()) {
             throw new EmailSendingException("Email address already exists");
         }
-        String otpCode = otpService.generateOtp();
+        OtpRequest otp= otpService.generateOtp();
 
         try {
-            emailService.sendOtpEmail(appUserRequest.getEmail(), "OTP", otpCode);
-        }  catch (Exception e) {
-            // Handle unexpected exceptions (log or re-throw)
+            emailService.sendOtpEmail(appUserRequest.getEmail(), "OTP", String.valueOf(otp.getOtpCode()));
+        }
+        catch (Exception e) {
+
             throw new RuntimeException("Unexpected error during user creation", e);
         }
-
+        //encoded Password
         String encodedPassword = encoder.encode(appUserRequest.getPassword());
         appUserRequest.setPassword(encodedPassword);
+        User user= userRepository.insert(appUserRequest);
+        System.out.println(otp);
+         otpService.insert(otp);
 
-        return userRepository.insert(appUserRequest);
+       // return userRepository.insert(appUserRequest);
+       return modelMapper.map(user,User.class);
     }
 
     @Override

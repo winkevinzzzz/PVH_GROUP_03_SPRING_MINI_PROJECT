@@ -4,9 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Otp {
-   String otpCode;
+   private UUID otpId ;
+   private String otpCode ;
+   private LocalDateTime issuedAt;
+   private LocalDateTime expiration;
+   private boolean verify;
+   User user ;
 }
