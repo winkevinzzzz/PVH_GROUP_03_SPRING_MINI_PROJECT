@@ -1,13 +1,18 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
 
+import jakarta.mail.MessagingException;
+import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.repository.UserRepository;
+import org.example.spring_boot_mini_project.service.OtpService;
 import org.example.spring_boot_mini_project.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,30 +21,41 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
     private  final UserRepository userRepository;
-    private final ModelMapper modelMapper=new ModelMapper();
-    //private final BCryptPasswordEncoder encoder;
+    private final ModelMapper modelMapper;
+    private final BCryptPasswordEncoder encoder;
+    private final EmailService emailService;
+    private final OtpService otpService;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder encoder, EmailService emailService, OtpService otpService) {
         this.userRepository = userRepository;
-       /// this.encoder = encoder;
+        this.modelMapper = modelMapper;
+        this.encoder = encoder;
+        this.emailService = emailService;
+        this.otpService = otpService;
     }
 
 
     @Override
-    public User createUser(AppUserRequest appUserRequest) {
-        String email = String.valueOf(userRepository.findByEmail(appUserRequest.getEmail()));
-        if(appUserRequest.getEmail().equalsIgnoreCase(email))
-        {
+    public User createUser(AppUserRequest appUserRequest) throws EmailSendingException {
 
+        // Check for existing email (optional)
+//        if (userRepository.existsByEmail(appUserRequest.getEmail())) {
+//            throw new IllegalArgumentException("Email address already exists");
+//        }
+
+        String otpCode = otpService.generateOtp();
+
+        try {
+            emailService.sendOtpEmail(appUserRequest.getEmail(), "OTP", otpCode);
+        }  catch (Exception e) {
+            // Handle unexpected exceptions (log or re-throw)
+            throw new RuntimeException("Unexpected error during user creation", e);
         }
-        User userId =userRepository.insert(appUserRequest);
-        // set password
 
-        appUserRequest.setPassword(appUserRequest.getPassword());
-        User user =userRepository.findById(userId.getUserId());
-        System.out.println(userId.getUserId());
-        return modelMapper.map(user,User.class);
+        String encodedPassword = encoder.encode(appUserRequest.getPassword());
+        appUserRequest.setPassword(encodedPassword);
 
+        return userRepository.insert(appUserRequest);
     }
 
     @Override
