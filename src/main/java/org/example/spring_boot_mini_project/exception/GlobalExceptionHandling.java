@@ -58,4 +58,31 @@ public class GlobalExceptionHandling {
         problemDetail.setProperty("errors", errors);
         return problemDetail;
     }
+    @ExceptionHandler(EmailSendingException.class)
+    public ProblemDetail emailException(EmailSendingException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        problemDetail.setTitle("Bad Request");
+        problemDetail.setStatus(404);
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+    @ExceptionHandler(PasswordException.class)
+    public ProblemDetail pwdException(PasswordException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        problemDetail.setTitle("Bad Request");
+        problemDetail.setStatus(404);
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+    @ExceptionHandler(AccountNotVerifiedException.class)
+    public ProblemDetail accountVerifyException(AccountNotVerifiedException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        problemDetail.setTitle("Bad Request");
+        problemDetail.setStatus(404);
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+
+
 }
