@@ -1,0 +1,9 @@
+<mapper namespace="org.example.spring_boot_mini_project.mapper.ExpenseMapper">
+
+    <insert id="createExpense" parameterType="Expense">
+        INSERT INTO expenses (id, amount, description, expense_date, categoryId)
+        VALUES (#{id}, #{amount}, #{description}, #{expenseDate}, #{categoryId, jdbcType=UUID})
+    </insert>
+
+
+</mapper>

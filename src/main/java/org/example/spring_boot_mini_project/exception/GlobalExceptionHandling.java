@@ -19,9 +19,9 @@ public class GlobalExceptionHandling {
     @ExceptionHandler(FindNotFoundException.class)
     public ProblemDetail handleUserNotFoundException(FindNotFoundException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
-        problemDetail.setTitle("Not Found");
+        problemDetail.setTitle("Bad Request");
         problemDetail.setStatus(404);
-        problemDetail.setProperty("timestamp", LocalDateTime.now());
+//        problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
 
