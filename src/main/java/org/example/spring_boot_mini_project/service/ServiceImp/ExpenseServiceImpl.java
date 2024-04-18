@@ -9,9 +9,8 @@ import org.example.spring_boot_mini_project.model.dto.request.ExpenseRequest;
 import org.example.spring_boot_mini_project.repository.ExpenseRepository;
 import org.example.spring_boot_mini_project.service.ExpenseService;
 
+import java.util.Arrays;
 import java.util.List;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -38,17 +37,41 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Expense updateExpense(UUID id, Expense expense) {
+    public Expense updateExpense(Long id, ExpenseRequest expenseRequest) {
         return null;
     }
 
-    @Override
-    public void deleteExpense(UUID id) {
 
+    @Override
+    public Expense updateExpense(Expense expense) {
+        expenseRepository.updateExpense(expense);
+        return expense;
+    }
+
+
+    @Override
+    public void deleteExpense(Long id) {
+        expenseRepository.deleteExpense(id);
     }
 
     @Override
-    public List<Expense> getAllExpenses() {
+    public List<Expense> getAllExpense(int offset, int limit, String sortBy, boolean ascending) {
+        // Validate sort by field
+        if (!Arrays.asList("date", "category_id").contains(sortBy)) {
+            throw new IllegalArgumentException("Invalid sort by field. Must be 'date' or 'category_id'.");
+        }
+
+        // Get the expenses
+        List<Expense> expenses = expenseRepository.getAllExpense(offset, limit, sortBy, ascending ? "asc" : "desc");
+
+        return expenses;
+    }
+
+
+
+
+    @Override
+    public List<Expense> getAllExpense() {
         return null;
     }
 
