@@ -1,4 +1,4 @@
-package org.example.spring_boot_mini_project;
+package org.example.spring_boot_mini_project.config;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
