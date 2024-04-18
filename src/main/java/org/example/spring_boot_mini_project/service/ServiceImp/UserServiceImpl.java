@@ -61,8 +61,6 @@ public class UserServiceImpl implements UserService {
         User user= userRepository.insert(appUserRequest);
         otp.setUser(user.getUserId());
         otp.setVerify(false);
-
-        System.out.println("Otp : " + otp.getUser());
          otpService.insert(otp);
 
        // return userRepository.insert(appUserRequest);
