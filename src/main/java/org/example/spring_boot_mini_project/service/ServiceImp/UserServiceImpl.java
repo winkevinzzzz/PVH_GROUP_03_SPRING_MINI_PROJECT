@@ -64,7 +64,8 @@ public class UserServiceImpl implements UserService {
          otpService.insert(otp);
 
        // return userRepository.insert(appUserRequest);
-       return modelMapper.map(user,User.class);
+       //return modelMapper.map(user,User.class);
+        return user;
     }
 
     @Override

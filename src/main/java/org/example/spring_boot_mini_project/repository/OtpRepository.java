@@ -1,12 +1,9 @@
 package org.example.spring_boot_mini_project.repository;
 
 import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.type.JdbcType;
 import org.example.spring_boot_mini_project.config.typeHandler;
 import org.example.spring_boot_mini_project.model.Otp;
-import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -16,8 +13,14 @@ public interface OtpRepository {
     @Insert("""
        INSERT INTO otps (otp_code,issued_at,expiration,verify,user_id)
        VALUES (#{otpRequest.otpCode},#{otpRequest.issuedAt},#{otpRequest.expiration},#{otpRequest.verify},
-        #{otpRequest.user})
+        #{otpRequest.user}::UUID)
     """)
+    @Results(id = "OtpMapping", value = {
+            @Result(property = "otpId", column = "otp_id", typeHandler = typeHandler.class),
+            @Result(property = "otpCode", column = "otp_code"),  // Use camelCase for property names
+            @Result(property = "issuedAt", column = "issued_at"),
+            @Result(property = "userId", column = "user_id",typeHandler = typeHandler.class, one = @One(select = "org.example.spring_boot_mini_project.repository.UserRepository.findById"))
+    })
     void insertOtp(@Param("otpRequest") OtpRequest otpRequest);
 
     @Select("""
@@ -34,21 +37,23 @@ public interface OtpRepository {
     """)
     void updateVerifyAfterVerified(@Param("otp") Otp otp);
     @Select("""
-    SELECT o.*, u.username  -- Select all Otp columns (o.*) and username from User (u)
-    FROM otps o
-    INNER JOIN users u ON o.user_id = u.id  -- Join otps and users on user_id
-    WHERE o.user_id = #{user}
+    SELECT * FROM otps
+    WHERE user_id =#{user}::UUID
 """)
     @Results(id = "OtpMapping", value = {
             @Result(property = "otpId", column = "otp_id", typeHandler = typeHandler.class),
-            @Result(property = "otp_code", column = "otp_code"),
+            @Result(property = "otpCode", column = "otp_code"),  // Use camelCase for property names
             @Result(property = "issuedAt", column = "issued_at"),
-            @Result(property = "user", column = "user_id", javaType = User.class, typeHandler = typeHandler.class)  // Map user_id to user property
+            @Result(property = "userId", column = "user_id",typeHandler = typeHandler.class, one = @One(select = "org.example.spring_boot_mini_project.repository.UserRepository.findById"))
     })
-   // Otp getOtpByUserId(UUID userId);
 
     Otp getOtpByUserId(UUID user);
 
-    //    @Result(property = "userId",typeHandler = typeHandler.class,column = "user_id")
-   // Otp getOtpByUserId(UUID userId);
+    @Update("""
+    UPDATE otps
+    SET otp_code = #{otp.otpCode},issued_at = #{otp.issuedAt},expiration = #{otp.expiration}
+    WHERE user_id=#{userId}::UUID
+    """)
+    void updateOtpCodeAfterResend(@Param("otp") OtpRequest otpRequest, UUID userId);
+
 }
