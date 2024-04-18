@@ -2,6 +2,7 @@ package org.example.spring_boot_mini_project.service.ServiceImp;
 
 import jakarta.mail.MessagingException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
+import org.example.spring_boot_mini_project.exception.PasswordException;
 import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
@@ -58,7 +59,10 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = encoder.encode(appUserRequest.getPassword());
         appUserRequest.setPassword(encodedPassword);
         User user= userRepository.insert(appUserRequest);
-        System.out.println(otp);
+        otp.setUser(user.getUserId());
+        otp.setVerify(false);
+
+        System.out.println("Otp : " + otp.getUser());
          otpService.insert(otp);
 
        // return userRepository.insert(appUserRequest);

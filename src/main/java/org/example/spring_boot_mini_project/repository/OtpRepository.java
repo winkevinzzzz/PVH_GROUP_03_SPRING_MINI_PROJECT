@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Mapper
 public interface OtpRepository {
     @Insert("""
-       INSERT INTO otps (otp_code,issued_at,expiration,user_id)
-       VALUES (#{otpRequest.otpCode},#{otpRequest.issuedAt},#{otpRequest.expiration},
-        #{otpRequest.user})
+       INSERT INTO otps (otp_code,issued_at,expiration,verify,user_id)
+       VALUES (#{otpRequest.otpCode},#{otpRequest.issuedAt},#{otpRequest.expiration},#{otpRequest.verify}, #{otpRequest.user}::UUID)
     """)
     void insertOtp(@Param("otpRequest") OtpRequest otpRequest);
 }

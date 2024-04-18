@@ -15,8 +15,8 @@ public class OtpRequest {
     private String otpCode ;
     private LocalDateTime issuedAt;
     private LocalDateTime expiration;
+    private Boolean verify;
     private UUID user ;
-
 
 
 }
