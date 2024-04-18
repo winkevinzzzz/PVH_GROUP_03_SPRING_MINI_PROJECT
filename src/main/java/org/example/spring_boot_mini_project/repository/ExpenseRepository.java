@@ -1,7 +1,8 @@
 package org.example.spring_boot_mini_project.repository;
 
 import org.apache.ibatis.annotations.*;
-import org.example.spring_boot_mini_project.typehandler.LocalDateTimeTypeHandler;
+//import org.example.spring_boot_mini_project.typehandler.LocalDateTimeTypeHandler;
+import org.apache.ibatis.type.LocalDateTimeTypeHandler;
 import org.springframework.stereotype.Repository;
 
 import org.example.spring_boot_mini_project.model.Expense;

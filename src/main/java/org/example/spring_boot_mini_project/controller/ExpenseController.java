@@ -28,10 +28,10 @@ public class ExpenseController {
 
     private final ExpenseService expenseService;
 
-    private String getUsernameOfCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
-    }
+//    private String getUsernameOfCurrentUser() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        return authentication.getName();
+//    }
 
     @PostMapping
     @Operation(summary = "Add New Expense")
@@ -57,9 +57,9 @@ public class ExpenseController {
         try {
             if (expense != null) {
 
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                String email =authentication.getName();
-                User user = userService.findUserByEmail();
+//                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//                String email =authentication.getName();
+//                User user = userService.findUserByEmail();
                 Map<String, Object> response = new LinkedHashMap<>();
                 response.put("message", "The expense has been successfully found.");
                 response.put("payload", expense);
