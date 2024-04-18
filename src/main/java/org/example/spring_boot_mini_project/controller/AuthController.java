@@ -3,13 +3,19 @@ package org.example.spring_boot_mini_project.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
+import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
+import org.example.spring_boot_mini_project.exception.EmailSendingException;
+import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.AuthRequest;
+import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
 import org.example.spring_boot_mini_project.model.dto.response.ApiResponse;
 import org.example.spring_boot_mini_project.model.dto.response.AuthResponse;
 import org.example.spring_boot_mini_project.model.dto.response.UserResponse;
 import org.example.spring_boot_mini_project.security.JwtService;
+import org.example.spring_boot_mini_project.service.OtpService;
+import org.example.spring_boot_mini_project.service.ServiceImp.EmailService;
 import org.example.spring_boot_mini_project.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auths")
@@ -26,10 +33,14 @@ public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService) {
+    private final OtpService otpService;
+    private final EmailService emailService;
+    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService, OtpService otpService, EmailService emailService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.otpService = otpService;
+        this.emailService = emailService;
     }
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest)
@@ -54,6 +65,14 @@ public class AuthController {
 
     private void authenticate(String email, String password) throws BadRequestException {
         UserDetails userDetails= userService.loadUserByUsername(email);
+        User user = userService.findUserByEmail(email);
+       // User user =userService.findUserById()
+        System.out.println("ashxdas"+user.getUserId());
+       Otp otp = otpService.getOtpByUserId(user.getUserId());
+        System.out.println(otp);
+        if(otp==null){
+            throw new AccountNotVerifiedException("please verify first");
+        }
         if(userDetails==null)
         {
             throw new BadRequestException("Wrong email");
@@ -62,4 +81,23 @@ public class AuthController {
        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,password));
 
     }
+    @PutMapping("/verify")
+    public ResponseEntity<?> verify(@RequestParam String otpCode) {
+        userService.verifyAccount(otpCode);
+        return ResponseEntity.ok("Your account is verify successful");
+    }
+    @PostMapping("/resend")
+    public ResponseEntity<?> resendCode(@Valid @RequestParam String email) {
+        User user=userService.findUserByEmail(email);
+        OtpRequest otp= otpService.generateOtp();
+        if(user!=null)
+        {
+                emailService.sendOtpEmail(user.getEmail(), "OTP", String.valueOf(otp.getOtpCode()));
+        }
+       else
+            throw new EmailSendingException("Invalid email");
+
+        return ResponseEntity.ok("Resend otp code successful");
+    }
+
 }

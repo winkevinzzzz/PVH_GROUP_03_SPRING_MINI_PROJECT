@@ -29,3 +29,5 @@ CREATE TABLE Expenses (
 );
 
 create extension if not exists "uuid-ossp";
+
+select * from otps where otp_code = '975523'

@@ -4,9 +4,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.type.JdbcType;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
-import org.example.spring_boot_mini_project.typeHandler;
+import org.example.spring_boot_mini_project.config.typeHandler;
 
 import java.util.UUID;
 
@@ -23,6 +24,8 @@ public interface UserRepository {
            SELECT * FROM users
            WHERE email = #{email}
            """)
+    @Result(property = "profileImage", column = "profile_image")
+    @Result(property = "userId", column = "user_id",typeHandler = typeHandler.class)
     User findByEmail(String email);
     @Result(property = "profileImage", column = "profile_image")
     @Result(property = "userId", column = "user_id",typeHandler = typeHandler.class)
