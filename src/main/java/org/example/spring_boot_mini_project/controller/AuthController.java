@@ -64,8 +64,12 @@ public class AuthController {
         {
             throw new BadRequestException("Wrong email");
         }
-
        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,password));
 
+    }
+    @PostMapping("/resend")
+    public ResponseEntity <?> resendOtpCode(@RequestParam String email) throws FindNotFoundException {
+        userService.resendOtpCode(email);
+        return new ResponseEntity<>("Resend otp code successful",HttpStatus.OK);
     }
 }

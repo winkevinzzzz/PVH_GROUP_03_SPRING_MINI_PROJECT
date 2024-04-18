@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class OtpServiceImpl implements OtpService {
@@ -19,7 +20,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     public OtpRequest generateOtp() {
-        OtpRequest otpRequest= new OtpRequest();
+        OtpRequest otpRequest = new OtpRequest();
         StringBuilder otpBuilder = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < OTP_LENGTH; i++) {
@@ -27,7 +28,8 @@ public class OtpServiceImpl implements OtpService {
             otpBuilder.append(digit);
         }
         otpRequest.setIssuedAt(LocalDateTime.now());
-        otpRequest.setOtpCode(otpBuilder.toString());
+        Integer otpCode = Integer.valueOf(otpBuilder.toString());
+        otpRequest.setOtpCode(otpCode);
         otpRequest.setExpiration(LocalDateTime.now().plusMinutes(5));
         return otpRequest;
     }
@@ -36,4 +38,10 @@ public class OtpServiceImpl implements OtpService {
     public void insert(OtpRequest otpRequest) {
         otpRepository.insertOtp(otpRequest);
     }
+
+    @Override
+    public void updateOtpcodeAfterResend(OtpRequest otpRequest, UUID userId) {
+        otpRepository.updateOtpCodeAfterResend(otpRequest,userId);
+    }
+
 }
