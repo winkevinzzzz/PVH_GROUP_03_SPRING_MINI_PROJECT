@@ -3,6 +3,7 @@ package org.example.spring_boot_mini_project.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
+import org.example.spring_boot_mini_project.exception.FindNotFoundException;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.AuthRequest;
@@ -10,6 +11,7 @@ import org.example.spring_boot_mini_project.model.dto.response.ApiResponse;
 import org.example.spring_boot_mini_project.model.dto.response.AuthResponse;
 import org.example.spring_boot_mini_project.model.dto.response.UserResponse;
 import org.example.spring_boot_mini_project.security.JwtService;
+import org.example.spring_boot_mini_project.service.FileService;
 import org.example.spring_boot_mini_project.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -26,24 +29,18 @@ public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService) {
+    private final FileService fileService;
+    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService, FileService fileService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-    }
-    @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/users")
-    public ResponseEntity<?> getAllUser(){
-        List<User> userDTOS =  userService.getAllUser();
-        ApiResponse<List<User>> response =  ApiResponse.<List<User>>builder()
-                .message("Successfully fetched all users")
-                .status(HttpStatus.OK).code(200).payload(userDTOS).build();
-        return ResponseEntity.ok(response);
+        this.fileService = fileService;
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest)
-    {
-
+    public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest) throws FindNotFoundException, IOException {
+        if (fileService.getFileByFileName(appUserRequest.getProfileImage())== null){
+            throw new FindNotFoundException("please upload image ");
+        }
         User user= userService.createUser(appUserRequest);
         UserResponse userResponse =new UserResponse();
         userResponse.setUserId(user.getUserId());
