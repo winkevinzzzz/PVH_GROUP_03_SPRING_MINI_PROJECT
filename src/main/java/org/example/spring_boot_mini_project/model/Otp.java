@@ -12,9 +12,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Otp {
    private UUID otpId ;
-   private String otpCode ;
+   private Integer otpCode ;
    private LocalDateTime issuedAt;
    private LocalDateTime expiration;
    private boolean verify;
-   UUID user ;
+   private UUID user ;
 }

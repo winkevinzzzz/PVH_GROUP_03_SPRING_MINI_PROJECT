@@ -33,8 +33,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auths/**", "/v3/api-docs/**",
                                 "/swagger-ui/**", "/api/v1/files/**",
                                 "/swagger-ui.html").permitAll()
-
-
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntrypoint))
