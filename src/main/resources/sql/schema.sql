@@ -31,3 +31,7 @@ CREATE TABLE Expenses (
 create extension if not exists "uuid-ossp";
 
 select * from otps where otp_code = '975523'
+SELECT o.*, u.email -- Select all Otp columns (o.*) and username from User (u)
+FROM otps o
+         INNER JOIN users u ON o.user_id = u.user_id -- Join otps and users on user_id
+WHERE o.user_id ='767d5fc6-876b-4bfd-bdd9-e34155cc04e2'

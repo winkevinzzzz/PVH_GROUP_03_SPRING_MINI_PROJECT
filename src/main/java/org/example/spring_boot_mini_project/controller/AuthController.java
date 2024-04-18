@@ -55,7 +55,7 @@ public class AuthController {
         return ResponseEntity.ok(userResponse);
     }
     @PostMapping("/login")
-     public ResponseEntity<?> authentication(@RequestBody AuthRequest authRequest) throws BadRequestException {
+     public ResponseEntity<?> authentication(@Valid @RequestBody AuthRequest authRequest) throws BadRequestException {
         authenticate(authRequest.getEmail(),authRequest.getPassword());
         final UserDetails userDetails= userService.loadUserByUsername(authRequest.getEmail());
         final String token= jwtService.generateToken(userDetails);
@@ -66,12 +66,11 @@ public class AuthController {
     private void authenticate(String email, String password) throws BadRequestException {
         UserDetails userDetails= userService.loadUserByUsername(email);
         User user = userService.findUserByEmail(email);
-       // User user =userService.findUserById()
-        System.out.println("ashxdas"+user.getUserId());
+        System.out.println("user"+user.getUserId());
        Otp otp = otpService.getOtpByUserId(user.getUserId());
-        System.out.println(otp);
-        if(otp==null){
-            throw new AccountNotVerifiedException("please verify first");
+        System.out.println("otp"+otp);
+        if(!otp.isVerify()){
+            throw new AccountNotVerifiedException("Your account is not verify yet");
         }
         if(userDetails==null)
         {
@@ -93,6 +92,7 @@ public class AuthController {
         if(user!=null)
         {
                 emailService.sendOtpEmail(user.getEmail(), "OTP", String.valueOf(otp.getOtpCode()));
+                otpService.updateResendCode(otp,user.getUserId());
         }
        else
             throw new EmailSendingException("Invalid email");

@@ -15,4 +15,5 @@ public interface OtpService {
     void updateVerifyAfterVerified(Otp otp);
 
     Otp getOtpByUserId(UUID userId);
+    void updateResendCode(OtpRequest otpRequest, UUID userId);
 }

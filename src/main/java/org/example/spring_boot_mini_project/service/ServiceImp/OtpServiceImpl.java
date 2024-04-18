@@ -53,4 +53,9 @@ public class OtpServiceImpl implements OtpService {
     public Otp getOtpByUserId(UUID userId) {
         return otpRepository.getOtpByUserId(userId);
     }
+
+    @Override
+    public void updateResendCode(OtpRequest otpRequest, UUID userId) {
+        otpRepository.updateOtpCodeAfterResend(otpRequest,userId);
+    }
 }
