@@ -61,9 +61,6 @@ public class UserServiceImpl implements UserService {
         otp.setUser(user.getUserId());
         otp.setVerify(false);
          otpService.insert(otp);
-
-       // return userRepository.insert(appUserRequest);
-       //return modelMapper.map(user,User.class);
         return user;
     }
 

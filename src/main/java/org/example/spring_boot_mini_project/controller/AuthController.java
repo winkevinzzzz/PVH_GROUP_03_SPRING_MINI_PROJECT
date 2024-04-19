@@ -1,13 +1,16 @@
 package org.example.spring_boot_mini_project.controller;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
+import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
 import org.example.spring_boot_mini_project.exception.PasswordException;
 import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.AuthRequest;
+import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
 import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
 import org.example.spring_boot_mini_project.model.dto.response.AuthResponse;
 import org.example.spring_boot_mini_project.model.dto.response.UserResponse;
@@ -15,6 +18,7 @@ import org.example.spring_boot_mini_project.repository.OtpRepository;
 import org.example.spring_boot_mini_project.security.JwtService;
 import org.example.spring_boot_mini_project.service.FileService;
 import org.example.spring_boot_mini_project.service.OtpService;
+import org.example.spring_boot_mini_project.service.ServiceImp.EmailService;
 import org.example.spring_boot_mini_project.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,13 +38,15 @@ public class AuthController {
     private final FileService fileService;
     private final OtpService otpService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService, FileService fileService, OtpRepository otpRepository, OtpService otpService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    private final EmailService emailService;
+    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService, FileService fileService, OtpRepository otpRepository, OtpService otpService, BCryptPasswordEncoder bCryptPasswordEncoder, EmailService emailService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.fileService = fileService;
         this.otpService = otpService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.emailService = emailService;
     }
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest)
@@ -85,6 +91,7 @@ public class AuthController {
         userService.resendOtpCode(email);
         return new ResponseEntity<>("Resend otp code successful",HttpStatus.OK);
     }
+
     @PutMapping("/forget")
     public ResponseEntity <?> forgetPassword(@RequestBody PasswordRequest passwordRequest, @RequestParam String email) throws PasswordException {
        userService.newPassword(passwordRequest ,email);
