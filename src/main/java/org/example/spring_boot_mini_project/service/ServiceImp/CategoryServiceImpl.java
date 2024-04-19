@@ -79,12 +79,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void updateCategory(Integer id, CategoryRequest categoryRequest) {
-
+    public CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest,UUID userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email);
+        UserResponse userResponse = modelMapper.map(user,UserResponse.class);
+        Category category = categoryRepository.updateCategory(id,categoryRequest,userId);
+        CategoryResponse categoryResponse = modelMapper.map(category,CategoryResponse.class);
+        categoryResponse.setUserResponse(userResponse);
+        return categoryResponse;
     }
 
     @Override
-    public void deleteCategory(Integer id) {
-
+    public void deleteCategoryById(UUID id, UUID userId) {
+        categoryRepository.deleteCategoryById(id,userId);
     }
 }
