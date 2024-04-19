@@ -1,5 +1,7 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
 
+import org.apache.ibatis.javassist.NotFoundException;
+import org.example.spring_boot_mini_project.exception.FindNotFoundException;
 import org.example.spring_boot_mini_project.model.Category;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.CategoryRequest;
@@ -51,8 +53,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getAllCategory(UUID userId) {
-        List<Category> categoryList = categoryRepository.getAllCategory(userId);
+    public List<CategoryResponse> getAllCategory(UUID userId, int pageNumber,int pageSize) {
+        List<Category> categoryList = categoryRepository.getAllCategory(userId,pageNumber,pageSize);
         System.out.println(categoryList.toString());
         List<CategoryResponse> categoryResponseList= new ArrayList<>();
         for (Category category : categoryList){
@@ -67,24 +69,32 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public CategoryResponse getCategoryById(UUID id,UUID userId) {
+    public CategoryResponse getCategoryById(UUID id,UUID userId) throws FindNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email);
         UserResponse userResponse = modelMapper.map(user,UserResponse.class);
         Category category = categoryRepository.getCategoryById(id,userId);
+        if(category==null)
+        {
+            throw new FindNotFoundException("Category with this id is not exist");
+        }
         CategoryResponse categoryResponse = modelMapper.map(category,CategoryResponse.class);
         categoryResponse.setUserResponse(userResponse);
         return categoryResponse;
     }
 
     @Override
-    public CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest,UUID userId) {
+    public CategoryResponse updateCategory(UUID id, CategoryRequest categoryRequest,UUID userId) throws FindNotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email);
         UserResponse userResponse = modelMapper.map(user,UserResponse.class);
         Category category = categoryRepository.updateCategory(id,categoryRequest,userId);
+        if(category==null)
+        {
+            throw new FindNotFoundException("Category with this id is not exist");
+        }
         CategoryResponse categoryResponse = modelMapper.map(category,CategoryResponse.class);
         categoryResponse.setUserResponse(userResponse);
         return categoryResponse;
@@ -93,5 +103,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategoryById(UUID id, UUID userId) {
         categoryRepository.deleteCategoryById(id,userId);
+
     }
 }

@@ -1,9 +1,10 @@
 package org.example.spring_boot_mini_project.repository;
 
 import org.apache.ibatis.annotations.*;
-import org.example.spring_boot_mini_project.config.typeHandler;
+//import org.example.spring_boot_mini_project.config.typeHandler;
 import org.example.spring_boot_mini_project.model.Category;
 import org.example.spring_boot_mini_project.model.dto.request.CategoryRequest;
+import org.example.spring_boot_mini_project.typehandler.UUIDTypeHandler;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,15 +14,17 @@ public interface CategoryRepository {
     @Select("""
     SELECT * FROM categories
     WHERE user_id = #{userId}::uuid
+     LIMIT #{numberSize}
+    OFFSET #{numberSize} * (#{numberPage} - 1)
     """)
     @Results(id = "catMapping" , value = {
-            @Result(property = "categoryID", column = "category_id",typeHandler = typeHandler.class),
+            @Result(property = "categoryID", column = "category_id",typeHandler = UUIDTypeHandler.class),
             @Result(property = "name", column = "name"),
             @Result(property = "description" , column = "description"),
             @Result(property = "user", column = "user_id",
             one = @One (select = "org.example.spring_boot_mini_project.repository.UserRepository.findById"))
     })
-    List<Category> getAllCategory(UUID userId);
+    List<Category> getAllCategory(UUID userId,int numberPage, int numberSize);
 
     @Select("""
     INSERT INTO categories(name, description, user_id)
@@ -48,11 +51,5 @@ public interface CategoryRepository {
     """)
     @ResultMap("catMapping")
     Category updateCategory(UUID id,@Param("categoryRequest") CategoryRequest categoryRequest, UUID userId);
-
-    @Select("""
-    SELECT * FROM categories WHERE category_id = #{id}::uuid
-    """)
-    @ResultMap("catMapping")
-    Category findCategoryById(UUID id);
 }
 

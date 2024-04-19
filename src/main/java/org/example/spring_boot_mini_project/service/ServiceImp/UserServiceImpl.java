@@ -1,4 +1,5 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
+
 import jakarta.mail.MessagingException;
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
@@ -21,23 +22,26 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
 public class UserServiceImpl implements UserService {
     private  final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder encoder;
     private final EmailService emailService;
     private final OtpService otpService;
-    private static final int OTP_LENGTH = 6;
+
     public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder encoder, EmailService emailService, OtpService otpService) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
-        this.bCryptPasswordEncoder = encoder;
+        this.encoder = encoder;
         this.emailService = emailService;
         this.otpService = otpService;
     }
+
+
     @Override
     public User createUser(AppUserRequest appUserRequest) throws EmailSendingException {
 
@@ -56,7 +60,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Unexpected error during user creation", e);
         }
         //encoded Password
-        String encodedPassword = bCryptPasswordEncoder.encode(appUserRequest.getPassword());
+        String encodedPassword = encoder.encode(appUserRequest.getPassword());
         appUserRequest.setPassword(encodedPassword);
         User user= userRepository.insert(appUserRequest);
         otp.setUser(user.getUserId());
@@ -74,6 +78,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public void verifyAccount(String otpCode) {
         Otp otp = otpService.getOtpCode(otpCode);
         if(otp == null){
@@ -86,45 +95,38 @@ public class UserServiceImpl implements UserService {
             }else {
                 otp.setVerify(true);
                 otpService.updateVerifyAfterVerified(otp);
+                System.out.println(otp);
             }
         }
     }
 
     @Override
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return null;
     }
 
     @Override
-public void resendOtpCode(String email) throws FindNotFoundException, MessagingException {
-    User user = userRepository.findByEmail(email);
-    if (user == null) {
-        throw new FindNotFoundException("Cannot find your email account please register first");
+    public void resendOtpCode(String email) throws FindNotFoundException, MessagingException {
+
     }
-    Integer otpCode = otpService.generateOtp().getOtpCode(); // Get the OTP code
-    OtpRequest otpRequest = new OtpRequest();
-    otpRequest.setIssuedAt(LocalDateTime.now());
-    otpRequest.setOtpCode(otpCode);
-    otpRequest.setExpiration(LocalDateTime.now().plusMinutes(5));
-    emailService.sendOtpEmail(email, "OTP", otpCode.toString());
-    otpService.updateOtpcodeAfterResend(otpRequest, user.getUserId());
-}
 
     @Override
     public void newPassword(PasswordRequest passwordRequest, String email) throws PasswordException {
-        if (!passwordRequest.getPassword().equals(passwordRequest.getConfirmPassword())){
-            throw new PasswordException("Your Password is not match ");
-        }
-        if(userRepository.findByEmail(email)!= null){
-            String passwordEncode = bCryptPasswordEncoder.encode(passwordRequest.getPassword());
-            passwordRequest.setPassword(passwordEncode);
-            userRepository.newPassword(passwordRequest,email);
-        }
+
+    }
+
+    @Override
+    public User findUserById(UUID id) {
+        return userRepository.findById(id);
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
+
+//        if(user == null){
+//            throw new NotFoundException("could not found user..!!");
+//        }
         return new CustomUserDetail(user);
 
     }

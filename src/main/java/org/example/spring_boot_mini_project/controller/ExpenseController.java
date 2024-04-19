@@ -48,7 +48,7 @@ public class ExpenseController {
                 ApiResponse.builder()
                         .message("successfully deleted category ")
                         .status(HttpStatus.OK)
-                        .code(201)
+//                        .code(201)
                         .payload(expenseResponse)
                         .build()
 
@@ -64,7 +64,7 @@ public class ExpenseController {
                 ApiResponse.builder()
                         .message("successfully deleted category ")
                         .status(HttpStatus.OK)
-                        .code(201)
+//                        .code(201)
                         .payload(expenseResponse)
                         .build()
 
@@ -80,7 +80,7 @@ public class ExpenseController {
                 ApiResponse.builder()
                         .message("successfully get expense")
                         .status(HttpStatus.CREATED)
-                        .code(201)
+//                        .code(201)
                         .payload(expense)
                         .build()
         );
@@ -96,7 +96,7 @@ public class ExpenseController {
                 ApiResponse.builder()
                         .message("successfully deleted category ")
                         .status(HttpStatus.OK)
-                        .code(201)
+//                        .code(201)
                         .payload(null)
                         .build()
         );
@@ -111,7 +111,7 @@ public class ExpenseController {
                 ApiResponse.builder()
                         .message("successfully get expense")
                         .status(HttpStatus.CREATED)
-                        .code(201)
+//                        .code(201)
                         .payload(expenseResponse)
                         .build());
     }
