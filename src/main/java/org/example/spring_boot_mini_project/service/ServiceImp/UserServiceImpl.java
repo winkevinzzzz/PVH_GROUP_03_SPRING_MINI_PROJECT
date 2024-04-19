@@ -1,4 +1,5 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
+import jakarta.mail.MessagingException;
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -92,18 +94,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-public void resendOtpCode(String email) throws FindNotFoundException {
+    public User findUserById(UUID id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+     public void resendOtpCode(String email) throws FindNotFoundException, MessagingException {
     User user = userRepository.findByEmail(email);
     if (user == null) {
         throw new FindNotFoundException("Cannot find your email account please register first");
     }
-    Integer otpCode = otpService.generateOtp().getOtpCode(); // Get the OTP code
+    String otpCode = otpService.generateOtp().getOtpCode(); // Get the OTP code
     OtpRequest otpRequest = new OtpRequest();
     otpRequest.setIssuedAt(LocalDateTime.now());
     otpRequest.setOtpCode(otpCode);
     otpRequest.setExpiration(LocalDateTime.now().plusMinutes(5));
     emailService.sendOtpEmail(email, "OTP", otpCode.toString());
-    otpService.updateOtpcodeAfterResend(otpRequest, user.getUserId());
+    otpService.updateResendCode(otpRequest, user.getUserId());
 }
 
     @Override

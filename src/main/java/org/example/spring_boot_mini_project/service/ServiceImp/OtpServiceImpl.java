@@ -21,7 +21,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     public OtpRequest generateOtp() {
-        OtpRequest otpRequest = new OtpRequest();
+        OtpRequest otpRequest= new OtpRequest();
         StringBuilder otpBuilder = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < OTP_LENGTH; i++) {
@@ -29,8 +29,7 @@ public class OtpServiceImpl implements OtpService {
             otpBuilder.append(digit);
         }
         otpRequest.setIssuedAt(LocalDateTime.now());
-        Integer otpCode = Integer.valueOf(otpBuilder.toString());
-        otpRequest.setOtpCode(otpCode);
+        otpRequest.setOtpCode(otpBuilder.toString());
         otpRequest.setExpiration(LocalDateTime.now().plusMinutes(5));
         return otpRequest;
     }
@@ -41,8 +40,8 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public void updateOtpcodeAfterResend(OtpRequest otpRequest, UUID userId) {
-        otpRepository.updateOtpCodeAfterResend(otpRequest,userId);
+    public Otp getOtpCode(String code) {
+        return otpRepository.getOtpByCode(code);
     }
 
     @Override
@@ -51,13 +50,12 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public Otp getOtpCode(String code) {
-        return otpRepository.getOtpByCode(code);
-    }
-
-    @Override
     public Otp getOtpByUserId(UUID userId) {
         return otpRepository.getOtpByUserId(userId);
     }
 
+    @Override
+    public void updateResendCode(OtpRequest otpRequest, UUID userId) {
+        otpRepository.updateOtpCodeAfterResend(otpRequest,userId);
+    }
 }

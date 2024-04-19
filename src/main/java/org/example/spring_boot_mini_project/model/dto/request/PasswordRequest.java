@@ -11,12 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PasswordRequest {
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#$%^&+=!]).{8,}$",
-            message = "Password must contain at least one digit, one letter, and one special character")
     @NotBlank(message = "Password can't be blank")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{8,}$", message = "password must be at least 8 characters long and include both letters and numbers")
     private String password;
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#$%^&+=!]).{8,}$",
-            message = "Password must contain at least one digit, one letter, and one special character")
     @NotBlank(message = "Password can't be blank")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{8,}$", message = "password must be at least 8 characters long and include both letters and numbers")
     private String confirmPassword;
 }

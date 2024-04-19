@@ -11,11 +11,9 @@ import java.util.UUID;
 public interface OtpService {
     OtpRequest generateOtp();
     void insert(OtpRequest otpRequest);
-    void updateOtpcodeAfterResend(OtpRequest otp, UUID userId);
-
+    Otp getOtpCode(String code);
     void updateVerifyAfterVerified(Otp otp);
 
-    Otp getOtpCode(String otpCode);
-
     Otp getOtpByUserId(UUID userId);
+    void updateResendCode(OtpRequest otpRequest, UUID userId);
 }
