@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
+
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +18,11 @@ public class ApiResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private  String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private T payload;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private HttpStatus status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private T payload;
+    private LocalDateTime time;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer code;
 }
