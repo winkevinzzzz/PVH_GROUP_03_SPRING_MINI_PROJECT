@@ -115,6 +115,7 @@ public class UserServiceImpl implements UserService {
             String passwordEncode = encoder.encode(passwordRequest.getPassword());
             passwordRequest.setPassword(passwordEncode);
             userRepository.newPassword(passwordRequest,email);
+
         }
         else
             throw new PasswordException("Invalid email");
