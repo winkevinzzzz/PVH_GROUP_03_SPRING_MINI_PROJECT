@@ -13,6 +13,8 @@ public interface CategoryRepository {
     @Select("""
     SELECT * FROM categories
     WHERE user_id = #{userId}::uuid
+     LIMIT #{numberSize}
+    OFFSET #{numberSize} * (#{numberPage} - 1)
     """)
     @Results(id = "catMapping" , value = {
             @Result(property = "categoryID", column = "category_id",typeHandler = typeHandler.class),
@@ -21,7 +23,7 @@ public interface CategoryRepository {
             @Result(property = "user", column = "user_id",
             one = @One (select = "org.example.spring_boot_mini_project.repository.UserRepository.findById"))
     })
-    List<Category> getAllCategory(UUID userId);
+    List<Category> getAllCategory(UUID userId,int numberPage, int numberSize);
 
     @Select("""
     INSERT INTO categories(name, description, user_id)
