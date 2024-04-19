@@ -31,10 +31,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers("/api/v1/auths/**", "/v3/api-docs/**",
-                                "/swagger-ui/**", "/api/v1/files/**",
+                                "/swagger-ui/**",
                                 "/swagger-ui.html").permitAll()
-
-
+                        .requestMatchers("/api/v1/files/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**")
+                        .permitAll()
+                        .requestMatchers("/api/v1/category/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntrypoint))
