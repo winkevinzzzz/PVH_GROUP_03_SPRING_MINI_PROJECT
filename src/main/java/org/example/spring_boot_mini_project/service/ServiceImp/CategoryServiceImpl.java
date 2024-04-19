@@ -31,29 +31,34 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category createCategory(CategoryRequest categoryRequest) {
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
         User user = userRepository.findByEmail(email);
         Category category = new Category();
         category.setName(categoryRequest.getName());
         category.setDescription(categoryRequest.getDescription());
-        category.setUserId(user);
+        category.setUser(user);
+        System.out.println(user.toString());
 
         Category categoryForResponse = categoryRepository.createCategory(category);
+        System.out.println(categoryForResponse.toString());
         UserResponse userResponse = modelMapper.map(user,UserResponse.class);
 
         CategoryResponse categoryResponse = modelMapper.map(categoryForResponse,CategoryResponse.class);
         categoryResponse.setUserResponse(userResponse);
-        return categoryForResponse;
+        return categoryResponse;
     }
 
     @Override
     public List<CategoryResponse> getAllCategory(UUID userId) {
         List<Category> categoryList = categoryRepository.getAllCategory(userId);
+        System.out.println(categoryList.toString());
         List<CategoryResponse> categoryResponseList= new ArrayList<>();
         for (Category category : categoryList){
+            UserResponse userResponse = modelMapper.map(category.getUser(),UserResponse.class);
             CategoryResponse categoryResponse = modelMapper.map(category, CategoryResponse.class);
+            categoryResponse.setUserResponse(userResponse);
             categoryResponseList.add(categoryResponse);
         }
         return categoryResponseList;
@@ -62,8 +67,15 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public Category getCategoryById(Integer id) {
-        return null;
+    public CategoryResponse getCategoryById(UUID id,UUID userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email);
+        UserResponse userResponse = modelMapper.map(user,UserResponse.class);
+        Category category = categoryRepository.getCategoryById(id,userId);
+        CategoryResponse categoryResponse = modelMapper.map(category,CategoryResponse.class);
+        categoryResponse.setUserResponse(userResponse);
+        return categoryResponse;
     }
 
     @Override

@@ -74,6 +74,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public void verifyAccount(String otpCode) {
         Otp otp = otpService.getOtpCode(otpCode);
         if(otp == null){
@@ -90,12 +95,6 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
-
-    @Override
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
     @Override
     public User findUserById(UUID id) {
         return userRepository.findById(id);

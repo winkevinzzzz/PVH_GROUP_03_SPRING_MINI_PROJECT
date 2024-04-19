@@ -65,10 +65,10 @@ public class AuthController {
 
     private void authenticate(String email, String password) throws BadRequestException {
         UserDetails userDetails= userService.loadUserByUsername(email);
-        User user = userService.findUserByEmail(email);
-        System.out.println("user"+user.getUserId());
+        User user = userService.findByEmail(email);
+        System.out.println(user.toString());
        Otp otp = otpService.getOtpByUserId(user.getUserId());
-        System.out.println("otp"+otp);
+        System.out.println(otp);
         if(!otp.isVerify()){
             throw new AccountNotVerifiedException("Your account is not verify yet");
         }
@@ -87,7 +87,7 @@ public class AuthController {
     }
     @PostMapping("/resend")
     public ResponseEntity<?> resendCode(@Valid @RequestParam String email) {
-        User user=userService.findUserByEmail(email);
+        User user=userService.findByEmail(email);
         OtpRequest otp= otpService.generateOtp();
         if(user!=null)
         {
