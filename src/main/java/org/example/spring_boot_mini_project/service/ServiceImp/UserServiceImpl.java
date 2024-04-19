@@ -8,6 +8,7 @@ import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
+import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
 import org.example.spring_boot_mini_project.repository.UserRepository;
 import org.example.spring_boot_mini_project.service.OtpService;
 import org.example.spring_boot_mini_project.service.UserService;
@@ -104,6 +105,21 @@ public class UserServiceImpl implements UserService {
     public User findUserById(UUID id) {
         return userRepository.findById(id);
     }
+
+    @Override
+    public void newPassword(PasswordRequest passwordRequest, String email) throws PasswordException {
+        if (!passwordRequest.getPassword().equals(passwordRequest.getConfirmPassword())){
+            throw new PasswordException("Your Password is not match ");
+        }
+        if(userRepository.findByEmail(email)!= null){
+            String passwordEncode = encoder.encode(passwordRequest.getPassword());
+            passwordRequest.setPassword(passwordEncode);
+            userRepository.newPassword(passwordRequest,email);
+        }
+        else
+            throw new PasswordException("Invalid email");
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

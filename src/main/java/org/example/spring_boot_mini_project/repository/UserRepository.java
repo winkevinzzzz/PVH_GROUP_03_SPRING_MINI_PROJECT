@@ -5,6 +5,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.config.typeHandler;
+import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
 
 import java.util.UUID;
 
@@ -34,4 +35,10 @@ public interface UserRepository {
            """)
     @ResultMap("UserMapping")
     User insert(@Param("u") AppUserRequest User);
+    @Update("""
+    UPDATE users
+    SET password = #{u.password}
+    WHERE email= #{email}
+    """)
+    void newPassword(@Param("u") PasswordRequest passwordRequest, String email);
 }
