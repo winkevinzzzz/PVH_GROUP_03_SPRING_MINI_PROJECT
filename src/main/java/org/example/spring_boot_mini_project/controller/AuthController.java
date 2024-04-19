@@ -4,12 +4,16 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
+import org.example.spring_boot_mini_project.exception.PasswordException;
+import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.AuthRequest;
+import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
 import org.example.spring_boot_mini_project.model.dto.response.ApiResponse;
 import org.example.spring_boot_mini_project.model.dto.response.AuthResponse;
 import org.example.spring_boot_mini_project.model.dto.response.UserResponse;
+import org.example.spring_boot_mini_project.repository.OtpRepository;
 import org.example.spring_boot_mini_project.security.JwtService;
 import org.example.spring_boot_mini_project.service.FileService;
 import org.example.spring_boot_mini_project.service.UserService;
@@ -30,11 +34,13 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final FileService fileService;
-    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService, FileService fileService) {
+    private final OtpRepository otpRepository;
+    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService, FileService fileService, OtpRepository otpRepository) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.fileService = fileService;
+        this.otpRepository = otpRepository;
     }
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest) throws FindNotFoundException, IOException {
@@ -72,4 +78,10 @@ public class AuthController {
         userService.resendOtpCode(email);
         return new ResponseEntity<>("Resend otp code successful",HttpStatus.OK);
     }
+    @PutMapping("/forget")
+    public ResponseEntity <?> forgetPassword(@RequestBody PasswordRequest passwordRequest, @RequestParam String email) throws PasswordException {
+       userService.newPassword(passwordRequest ,email);
+        return new ResponseEntity<>("Your password is reset successful", HttpStatus.OK);
+    }
+
 }

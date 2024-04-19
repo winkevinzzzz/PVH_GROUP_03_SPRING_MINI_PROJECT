@@ -3,6 +3,7 @@ package org.example.spring_boot_mini_project.repository;
 import org.apache.ibatis.annotations.*;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
+import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
 import org.example.spring_boot_mini_project.typeHandler;
 
 import java.util.UUID;
@@ -34,4 +35,11 @@ public interface UserRepository {
            """)
     @ResultMap("userMapping")
     User insert(@Param("u") AppUserRequest User);
+
+    @Update("""
+    UPDATE users
+    SET password = #{u.password}
+    WHERE email= #{email}
+    """)
+    void newPassword(@Param("u")PasswordRequest passwordRequest, String email);
 }

@@ -1,6 +1,5 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
 
-import jakarta.mail.MessagingException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
 import org.example.spring_boot_mini_project.exception.PasswordException;
@@ -8,11 +7,11 @@ import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
+import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
 import org.example.spring_boot_mini_project.repository.UserRepository;
 import org.example.spring_boot_mini_project.service.OtpService;
 import org.example.spring_boot_mini_project.service.UserService;
 import org.modelmapper.ModelMapper;
-import org.springframework.mail.MailException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,21 +20,19 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
     private  final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailService emailService;
     private final OtpService otpService;
     private static final int OTP_LENGTH = 6;
     public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder encoder, EmailService emailService, OtpService otpService) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
-        this.encoder = encoder;
+        this.bCryptPasswordEncoder = encoder;
         this.emailService = emailService;
         this.otpService = otpService;
     }
@@ -57,7 +54,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Unexpected error during user creation", e);
         }
         //encoded Password
-        String encodedPassword = encoder.encode(appUserRequest.getPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(appUserRequest.getPassword());
         appUserRequest.setPassword(encodedPassword);
         User user= userRepository.insert(appUserRequest);
         otp.setUser(user.getUserId());
@@ -73,17 +70,6 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-//    @Override
-//    public void resendOtpCode(String email) throws FindNotFoundException {
-//        User user = userRepository.findByEmail(email);
-//        if (user == null){
-//            throw new FindNotFoundException("Cannot find your email account please register first");
-//        }
-//        OtpRequest otp= otpService.generateOtp();
-//        emailService.sendOtpEmail(email,"OTP",user,otp.toString();
-//        otpService.updateThecodeAfterResend(otp,user.getUserId());
-//
-//    }
 @Override
 public void resendOtpCode(String email) throws FindNotFoundException {
     User user = userRepository.findByEmail(email);
@@ -98,6 +84,18 @@ public void resendOtpCode(String email) throws FindNotFoundException {
     emailService.sendOtpEmail(email, "OTP", otpCode.toString());
     otpService.updateOtpcodeAfterResend(otpRequest, user.getUserId());
 }
+
+    @Override
+    public void newPassword(PasswordRequest passwordRequest, String email) throws PasswordException {
+        if (!passwordRequest.getPassword().equals(passwordRequest.getConfirmPassword())){
+            throw new PasswordException("Your Password is not match ");
+        }
+        if(userRepository.findByEmail(email)!= null){
+            String passwordEncode = bCryptPasswordEncoder.encode(passwordRequest.getPassword());
+            passwordRequest.setPassword(passwordEncode);
+            userRepository.newPassword(passwordRequest,email);
+        }
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
