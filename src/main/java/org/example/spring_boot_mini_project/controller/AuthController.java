@@ -43,10 +43,9 @@ public class AuthController {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest) throws FindNotFoundException, IOException {
-        if (fileService.getFileByFileName(appUserRequest.getProfileImage())== null){
-            throw new FindNotFoundException("please upload image ");
-        }
+    public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest)
+    {
+
         User user= userService.createUser(appUserRequest);
         UserResponse userResponse =new UserResponse();
         userResponse.setUserId(user.getUserId());

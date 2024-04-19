@@ -8,6 +8,7 @@ import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService extends UserDetailsService {
     User createUser(AppUserRequest appUserRequest);

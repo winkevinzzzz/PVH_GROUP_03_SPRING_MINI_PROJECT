@@ -10,10 +10,18 @@ import java.util.UUID;
 
 @Mapper
 public interface OtpRepository {
+
     @Insert("""
        INSERT INTO otps (otp_code,issued_at,expiration,verify,user_id)
-       VALUES (#{otpRequest.otpCode},#{otpRequest.issuedAt},#{otpRequest.expiration},#{otpRequest.verify}, #{otpRequest.user}::UUID)
+       VALUES (#{otpRequest.otpCode},#{otpRequest.issuedAt},#{otpRequest.expiration},#{otpRequest.verify},
+        #{otpRequest.user}::UUID)
     """)
+    @Results(id = "OtpMapping", value = {
+            @Result(property = "otpId", column = "otp_id", typeHandler = typeHandler.class),
+            @Result(property = "otpCode", column = "otp_code"),  // Use camelCase for property names
+            @Result(property = "issuedAt", column = "issued_at"),
+            @Result(property = "userId", column = "user_id",typeHandler = typeHandler.class, one = @One(select = "org.example.spring_boot_mini_project.repository.UserRepository.findById"))
+    })
     void insertOtp(@Param("otpRequest") OtpRequest otpRequest);
     @Select("""
         SELECT * FROM otps
@@ -39,7 +47,6 @@ public interface OtpRepository {
     UPDATE otps SET verify = #{otp.verify} WHERE otp_code = #{otp.otpCode}
     """)
     void updateVerifyAfterVerified(@Param("otp") Otp otp);
-
     @Select("""
     SELECT * FROM otps
     WHERE user_id =#{user}::UUID

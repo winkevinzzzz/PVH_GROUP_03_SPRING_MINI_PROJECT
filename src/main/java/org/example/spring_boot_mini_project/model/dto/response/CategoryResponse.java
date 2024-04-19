@@ -7,13 +7,12 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class CategoryResponse {
     private UUID categoryId;
     private String name;
     private String description;
-    private UserResponse user;
-
+    private UserResponse userResponse;
 
 }

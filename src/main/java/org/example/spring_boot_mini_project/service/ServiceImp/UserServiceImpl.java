@@ -1,8 +1,14 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
+<<<<<<< HEAD
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
 import org.example.spring_boot_mini_project.exception.PasswordException;
+=======
+
+import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
+import org.example.spring_boot_mini_project.exception.EmailSendingException;
+>>>>>>> 2fbad2a0c191ac4d28a7c50c6ee9cb712b94be12
 import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;
@@ -20,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -62,7 +69,8 @@ public class UserServiceImpl implements UserService {
          otpService.insert(otp);
 
        // return userRepository.insert(appUserRequest);
-       return modelMapper.map(user,User.class);
+       //return modelMapper.map(user,User.class);
+        return user;
     }
 
     @Override
