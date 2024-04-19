@@ -1,5 +1,6 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
 
+import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
 import org.example.spring_boot_mini_project.repository.OtpRepository;
 import org.example.spring_boot_mini_project.service.OtpService;
@@ -28,9 +29,8 @@ public class OtpServiceImpl implements OtpService {
             otpBuilder.append(digit);
         }
         otpRequest.setIssuedAt(LocalDateTime.now());
-        Integer otpCode = Integer.valueOf(otpBuilder.toString());
-        otpRequest.setOtpCode(otpCode);
-        otpRequest.setExpiration(LocalDateTime.now().plusMinutes(5));
+        otpRequest.setOtpCode(otpBuilder.toString());
+        otpRequest.setExpiration(LocalDateTime.now().plusMinutes(1));
         return otpRequest;
     }
 
@@ -40,8 +40,22 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public void updateOtpcodeAfterResend(OtpRequest otpRequest, UUID userId) {
-        otpRepository.updateOtpCodeAfterResend(otpRequest,userId);
+    public Otp getOtpCode(String code) {
+        return otpRepository.getOtpByCode(code);
     }
 
+    @Override
+    public void updateVerifyAfterVerified(Otp otp) {
+        otpRepository.updateVerifyAfterVerified(otp);
+    }
+
+    @Override
+    public Otp getOtpByUserId(UUID userId) {
+        return otpRepository.getOtpByUserId(userId);
+    }
+
+    @Override
+    public void updateResendCode(OtpRequest otpRequest, UUID userId) {
+        otpRepository.updateOtpCodeAfterResend(otpRequest,userId);
+    }
 }
