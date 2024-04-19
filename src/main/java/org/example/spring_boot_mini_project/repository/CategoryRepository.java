@@ -48,5 +48,11 @@ public interface CategoryRepository {
     """)
     @ResultMap("catMapping")
     Category updateCategory(UUID id,@Param("categoryRequest") CategoryRequest categoryRequest, UUID userId);
+
+    @Select("""
+    SELECT * FROM categories WHERE category_id = #{id}::uuid
+    """)
+    @ResultMap("catMapping")
+    Category findCategoryById(UUID id);
 }
 

@@ -1,9 +1,9 @@
 package org.example.spring_boot_mini_project.repository;
 
 import org.apache.ibatis.annotations.*;
+import org.example.spring_boot_mini_project.config.typeHandler;
 import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
-import org.example.spring_boot_mini_project.typeHandler;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;

@@ -9,8 +9,8 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExpenseCategoryResponse {
-    private UUID categoryId;
+public class CategoryExpenseResponse {
+    private UUID categoryID;
     private String name;
     private String description;
 }

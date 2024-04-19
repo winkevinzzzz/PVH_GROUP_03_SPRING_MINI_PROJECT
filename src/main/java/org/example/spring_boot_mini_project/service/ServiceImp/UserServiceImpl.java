@@ -1,14 +1,8 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
-<<<<<<< HEAD
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
 import org.example.spring_boot_mini_project.exception.PasswordException;
-=======
-
-import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
-import org.example.spring_boot_mini_project.exception.EmailSendingException;
->>>>>>> 2fbad2a0c191ac4d28a7c50c6ee9cb712b94be12
 import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;

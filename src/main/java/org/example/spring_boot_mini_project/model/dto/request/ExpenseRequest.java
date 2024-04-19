@@ -22,7 +22,7 @@ public class ExpenseRequest {
     private String description;
 
     @NotNull(message = "Date is required")
-    private LocalDateTime expenseDate;
+    private LocalDateTime date;
 
     @NotNull(message = "Category ID is required")
     private UUID categoryId;

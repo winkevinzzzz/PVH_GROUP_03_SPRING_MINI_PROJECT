@@ -1,10 +1,10 @@
 package org.example.spring_boot_mini_project.repository;
 
 import org.apache.ibatis.annotations.*;
+import org.example.spring_boot_mini_project.config.typeHandler;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
-import org.example.spring_boot_mini_project.typeHandler;
 
 import java.util.UUID;
 

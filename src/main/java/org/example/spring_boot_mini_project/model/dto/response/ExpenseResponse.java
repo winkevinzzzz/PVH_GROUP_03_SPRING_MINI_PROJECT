@@ -15,7 +15,7 @@ public class ExpenseResponse {
     private UUID expenseId;
     private BigDecimal amount;
     private String description;
-    private LocalDateTime expense_date;
+    private LocalDateTime expenseDate;
     private UserResponse user;
-    private ExpenseCategoryResponse expense;
+    private CategoryExpenseResponse category;
 }

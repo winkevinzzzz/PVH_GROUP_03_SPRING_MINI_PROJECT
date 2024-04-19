@@ -14,9 +14,9 @@ public class DatabaseConfiguration {
     public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/spring_mini_project");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/spring_db");
         dataSource.setUsername("postgres");
-        dataSource.setPassword("sasa1112");
+        dataSource.setPassword("database09");
         return dataSource;
     }
 }

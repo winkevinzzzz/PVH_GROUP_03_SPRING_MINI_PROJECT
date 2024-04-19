@@ -11,7 +11,7 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor
 public class CustomUserDetail implements UserDetails {
-    private final User user;
+    private User user;
     public CustomUserDetail(User user) {
         this.user = user;
     }

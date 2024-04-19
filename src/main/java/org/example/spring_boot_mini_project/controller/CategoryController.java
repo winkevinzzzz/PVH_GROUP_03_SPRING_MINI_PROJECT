@@ -48,7 +48,7 @@ public class CategoryController {
 public ResponseEntity<?> getAllCategories() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     String email = auth.getName();
-    User user = userService.findByEmail(email);
+    User user = userService.findUserByEmail(email);
     List<CategoryResponse>  categoryResponses = categoryService.getAllCategory(user.getUserId());
     return ResponseEntity.ok(
             ApiResponse.builder()
@@ -57,14 +57,13 @@ public ResponseEntity<?> getAllCategories() {
                     .code(200)
                     .payload(categoryResponses)
                     .build()
-
     );
 }
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable UUID id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
+        User user = userService.findUserByEmail(email);
         CategoryResponse category = categoryService.getCategoryById(id,user.getUserId());
         return ResponseEntity.ok(
                 ApiResponse.builder()
@@ -75,14 +74,12 @@ public ResponseEntity<?> getAllCategories() {
                         .build()
 
         );
-
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategoryById(@PathVariable UUID id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
-        System.out.println(user.toString());
+        User user = userService.findUserByEmail(email);
        categoryService.deleteCategoryById(id,user.getUserId());
         return ResponseEntity.ok(
                 ApiResponse.builder()
@@ -98,7 +95,7 @@ public ResponseEntity<?> getAllCategories() {
     public ResponseEntity<?> updateCategoryById(@PathVariable UUID id, @RequestBody CategoryRequest categoryRequest){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userService.findByEmail(email);
+        User user = userService.findUserByEmail(email);
         CategoryResponse categoryResponse = categoryService.updateCategory(id,categoryRequest,user.getUserId());
         return ResponseEntity.ok(
                 ApiResponse.builder()
