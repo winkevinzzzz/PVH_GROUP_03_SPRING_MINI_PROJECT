@@ -3,6 +3,7 @@ package org.example.spring_boot_mini_project.repository;
 import org.apache.ibatis.annotations.*;
 import org.example.spring_boot_mini_project.config.typeHandler;
 import org.example.spring_boot_mini_project.model.Category;
+import org.example.spring_boot_mini_project.model.dto.request.CategoryRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,4 +37,16 @@ public interface CategoryRepository {
     """)
     @ResultMap("catMapping")
     Category getCategoryById(UUID id,UUID userId);
+    @Delete("""
+    DELETE FROM categories WHERE category_id = #{id}::uuid AND user_id = #{userId}::uuid
+    """)
+    void deleteCategoryById(UUID id, UUID userId);
+
+
+    @Select("""
+    UPDATE categories SET name = #{categoryRequest.name} , description = #{categoryRequest.description} WHERE category_id = #{id}::uuid AND user_id = #{userId}::uuid RETURNING *
+    """)
+    @ResultMap("catMapping")
+    Category updateCategory(UUID id,@Param("categoryRequest") CategoryRequest categoryRequest, UUID userId);
 }
+

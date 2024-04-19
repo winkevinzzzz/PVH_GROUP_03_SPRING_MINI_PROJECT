@@ -77,6 +77,37 @@ public ResponseEntity<?> getAllCategories() {
         );
 
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCategoryById(@PathVariable UUID id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+        System.out.println(user.toString());
+       categoryService.deleteCategoryById(id,user.getUserId());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .message("successfully deleted category ")
+                        .status(HttpStatus.OK)
+                        .code(201)
+                        .payload(null)
+                        .build()
+
+        );
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCategoryById(@PathVariable UUID id, @RequestBody CategoryRequest categoryRequest){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+        CategoryResponse categoryResponse = categoryService.updateCategory(id,categoryRequest,user.getUserId());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .message("successfully updated category ")
+                        .status(HttpStatus.OK)
+                        .code(201)
+                        .payload(categoryResponse)
+                        .build());
+    }
 
 
 }
