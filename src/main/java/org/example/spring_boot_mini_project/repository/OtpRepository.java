@@ -12,12 +12,8 @@ public interface OtpRepository {
 
     @Insert("""
        INSERT INTO otps (otp_code,issued_at,expiration,verify,user_id)
-<<<<<<< HEAD
-       VALUES (#{otpRequest.otpCode},#{otpRequest.issuedAt},#{otpRequest.expiration},#{otpRequest.verify}, #{otpRequest.user}::UUID)
-=======
        VALUES (#{otpRequest.otpCode},#{otpRequest.issuedAt},#{otpRequest.expiration},#{otpRequest.verify},
         #{otpRequest.user}::UUID)
->>>>>>> origin/sreyka
     """)
     @Results(id = "OtpMapping", value = {
             @Result(property = "otpId", column = "otp_id", typeHandler = typeHandler.class),

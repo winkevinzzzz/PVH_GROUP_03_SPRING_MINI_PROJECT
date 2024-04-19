@@ -28,14 +28,15 @@ public class UserServiceImpl implements UserService {
     private  final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder encoder;
-    private final EmailService emailService;
+//    private final EmailService emailService;
+    private final EmailingService emailService;
     private final OtpService otpService;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder encoder, EmailService emailService, OtpService otpService) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder encoder, EmailingService emailService1, OtpService otpService) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.encoder = encoder;
-        this.emailService = emailService;
+        this.emailService = emailService1;
         this.otpService = otpService;
     }
 
@@ -54,7 +55,7 @@ public class UserServiceImpl implements UserService {
         OtpRequest otp= otpService.generateOtp();
 
         try {
-            emailService.sendOtpEmail(appUserRequest.getEmail(), "OTP", String.valueOf(otp.getOtpCode()));
+            emailService.sendMail(appUserRequest.getEmail(), String.valueOf(otp.getOtpCode()));
         }
         catch (Exception e) {
 

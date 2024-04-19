@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Opt Email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
 <div style="height: 100% ;width: 100%;
@@ -19,10 +20,11 @@
     <p style="text-align: center">Before you sign in, we need to verify your identify.  Enter the following code on the sign-in page.</p>
     <!-- box opt -->
     <div style="height: 50px ;width: 200px;background-color:dimgrey;margin: 0 auto;">
-        <p style="padding-top: 20px;padding-left: 50px;">X-X-X-X-X-X</p>
+        <p th:text="${msg}" style="padding-top: 20px;padding-left: 50px;">X-X-X-X-X-X</p>
     </div>
     <!-- text -->
     <p style="text-align: center">Welcome to the Expense Tracking Application. Here,  you can monitor your expenses and manage your budget effectively.</p>
 </div>
+
 </body>
 </html>
