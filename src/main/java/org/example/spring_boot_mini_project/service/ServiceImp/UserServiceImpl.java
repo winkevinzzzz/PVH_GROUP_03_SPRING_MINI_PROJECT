@@ -1,4 +1,5 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
+import jakarta.mail.MessagingException;
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
@@ -92,7 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-public void resendOtpCode(String email) throws FindNotFoundException {
+public void resendOtpCode(String email) throws FindNotFoundException, MessagingException {
     User user = userRepository.findByEmail(email);
     if (user == null) {
         throw new FindNotFoundException("Cannot find your email account please register first");
