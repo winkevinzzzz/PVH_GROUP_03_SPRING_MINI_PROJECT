@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface UserRepository {
     @Select("""
            SELECT * FROM users
-           WHERE user_id = #{id}
+           WHERE user_id = #{id}::UUID;
            """)
     @Results(id ="userMapping", value = {
             @Result(property = "userId", column = "user_id",typeHandler = typeHandler.class),

@@ -12,6 +12,8 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
     User createUser(AppUserRequest appUserRequest);
     List<User> getAllUser();
+    void verifyAccount(String otpCode);
+    User findUserByEmail(String email);
 
     void resendOtpCode(String email) throws FindNotFoundException;
 

@@ -1,9 +1,11 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
 
+import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
 import org.example.spring_boot_mini_project.exception.PasswordException;
 import org.example.spring_boot_mini_project.model.CustomUserDetail;
+import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
@@ -70,7 +72,29 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-@Override
+    @Override
+    public void verifyAccount(String otpCode) {
+        Otp otp = otpService.getOtpCode(otpCode);
+        if(otp == null){
+            throw new AccountNotVerifiedException("invalid code");
+        }else {
+            if(otp.isVerify()){
+                throw new AccountNotVerifiedException("has been verified you can login");
+            } else if (otp.getExpiration().isBefore(LocalDateTime.now())) {
+                throw new AccountNotVerifiedException("Opt code is expired ");
+            }else {
+                otp.setVerify(true);
+                otpService.updateVerifyAfterVerified(otp);
+            }
+        }
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
 public void resendOtpCode(String email) throws FindNotFoundException {
     User user = userRepository.findByEmail(email);
     if (user == null) {

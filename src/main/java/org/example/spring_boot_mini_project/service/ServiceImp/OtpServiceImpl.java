@@ -1,5 +1,6 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
 
+import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
 import org.example.spring_boot_mini_project.repository.OtpRepository;
 import org.example.spring_boot_mini_project.service.OtpService;
@@ -42,6 +43,21 @@ public class OtpServiceImpl implements OtpService {
     @Override
     public void updateOtpcodeAfterResend(OtpRequest otpRequest, UUID userId) {
         otpRepository.updateOtpCodeAfterResend(otpRequest,userId);
+    }
+
+    @Override
+    public void updateVerifyAfterVerified(Otp otp) {
+        otpRepository.updateVerifyAfterVerified(otp);
+    }
+
+    @Override
+    public Otp getOtpCode(String code) {
+        return otpRepository.getOtpByCode(code);
+    }
+
+    @Override
+    public Otp getOtpByUserId(UUID userId) {
+        return otpRepository.getOtpByUserId(userId);
     }
 
 }

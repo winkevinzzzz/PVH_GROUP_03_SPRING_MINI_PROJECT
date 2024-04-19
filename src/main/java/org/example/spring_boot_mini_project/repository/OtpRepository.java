@@ -3,6 +3,7 @@ package org.example.spring_boot_mini_project.repository;
 import org.apache.ibatis.annotations.*;
 import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
+import org.example.spring_boot_mini_project.typeHandler;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
@@ -33,6 +34,24 @@ public interface OtpRepository {
     WHERE user_id=#{userId}::UUID
     """)
     void updateOtpCodeAfterResend(@Param("otp") OtpRequest otpRequest, UUID userId);
+
+    @Update("""
+    UPDATE otps SET verify = #{otp.verify} WHERE otp_code = #{otp.otpCode}
+    """)
+    void updateVerifyAfterVerified(@Param("otp") Otp otp);
+
+    @Select("""
+    SELECT * FROM otps
+    WHERE user_id =#{user}::UUID
+""")
+    @Results(id = "OtpMapping", value = {
+            @Result(property = "otpId", column = "otp_id", typeHandler = typeHandler.class),
+            @Result(property = "otpCode", column = "otp_code"),  // Use camelCase for property names
+            @Result(property = "issuedAt", column = "issued_at"),
+            @Result(property = "user",typeHandler = typeHandler.class, column = "user_id", one = @One(select = "org.example.spring_boot_mini_project.repository.UserRepository.findById"))
+    })
+
+    Otp getOtpByUserId(UUID user);
 }
 
 
