@@ -23,7 +23,7 @@ CREATE TABLE Expenses (
                           expense_id UUID default uuid_generate_v4() PRIMARY KEY,
                           amount DECIMAL NOT NULL,
                           description TEXT,
-                          date DATE NOT NULL,
+                          date timestamp NOT NULL,
                           user_id UUID REFERENCES Users(user_id),
                           category_id UUID REFERENCES Categories(category_id)
 );

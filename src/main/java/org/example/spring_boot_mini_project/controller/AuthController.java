@@ -96,7 +96,7 @@ public class AuthController {
         if(user!=null)
         {
                 emailService.sendOtpEmail(user.getEmail(), "OTP", String.valueOf(otp.getOtpCode()));
-                otpService.updateResendCode(otp,user.getUserId());
+                otpService.updateOtpcodeAfterResend(otp,user.getUserId());
         }
        else
             throw new EmailSendingException("Invalid email");

@@ -16,7 +16,7 @@ public class DatabaseConfiguration {
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://localhost:5432/spring_db");
         dataSource.setUsername("postgres");
-        dataSource.setPassword("admin");
+        dataSource.setPassword("database09");
         return dataSource;
     }
 }

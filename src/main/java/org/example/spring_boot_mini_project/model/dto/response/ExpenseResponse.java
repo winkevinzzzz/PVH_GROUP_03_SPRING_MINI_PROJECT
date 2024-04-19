@@ -1,8 +1,5 @@
-package org.example.spring_boot_mini_project.model;
+package org.example.spring_boot_mini_project.model.dto.response;
 
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,14 +9,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Expense {
+@NoArgsConstructor
+public class ExpenseResponse {
     private UUID expenseId;
     private BigDecimal amount;
     private String description;
-    private LocalDateTime date;
-    private User user;
-    private Category category;
+    private LocalDateTime expenseDate;
+    private UserResponse user;
+    private CategoryExpenseResponse category;
 }
-

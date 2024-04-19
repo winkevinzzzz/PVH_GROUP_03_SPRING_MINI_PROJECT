@@ -1,7 +1,8 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
-
+import jakarta.mail.MessagingException;
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
+import org.example.spring_boot_mini_project.exception.FindNotFoundException;
 import org.example.spring_boot_mini_project.exception.PasswordException;
 import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.Otp;
@@ -20,31 +21,25 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
 public class UserServiceImpl implements UserService {
     private  final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailService emailService;
     private final OtpService otpService;
-
+    private static final int OTP_LENGTH = 6;
     public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder encoder, EmailService emailService, OtpService otpService) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
-        this.encoder = encoder;
+        this.bCryptPasswordEncoder = encoder;
         this.emailService = emailService;
         this.otpService = otpService;
     }
-
-
     @Override
-    public User createUser(AppUserRequest appUserRequest) throws EmailSendingException, PasswordException {
-        if(!appUserRequest.getPassword().equals(appUserRequest.getConfirmPassword())){
-            throw new PasswordException("Password must be the same as confirm password");
-        }
+    public User createUser(AppUserRequest appUserRequest) throws EmailSendingException {
 
         // Check for existing email
         Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(appUserRequest.getEmail()));
@@ -54,20 +49,21 @@ public class UserServiceImpl implements UserService {
         OtpRequest otp= otpService.generateOtp();
 
         try {
-            emailService.sendOtpEmail(appUserRequest.getEmail(), "Verify OTP code", String.valueOf(otp.getOtpCode()));
+            emailService.sendOtpEmail(appUserRequest.getEmail(), "OTP", String.valueOf(otp.getOtpCode()));
         }
         catch (Exception e) {
 
             throw new RuntimeException("Unexpected error during user creation", e);
         }
         //encoded Password
-        String encodedPassword = encoder.encode(appUserRequest.getPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(appUserRequest.getPassword());
         appUserRequest.setPassword(encodedPassword);
         User user= userRepository.insert(appUserRequest);
         otp.setUser(user.getUserId());
         otp.setVerify(false);
          otpService.insert(otp);
 
+       // return userRepository.insert(appUserRequest);
        //return modelMapper.map(user,User.class);
         return user;
     }
@@ -90,7 +86,6 @@ public class UserServiceImpl implements UserService {
             }else {
                 otp.setVerify(true);
                 otpService.updateVerifyAfterVerified(otp);
-                System.out.println(otp);
             }
         }
     }
@@ -101,9 +96,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserById(UUID id) {
-        return userRepository.findById(id);
+public void resendOtpCode(String email) throws FindNotFoundException, MessagingException {
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+        throw new FindNotFoundException("Cannot find your email account please register first");
     }
+    Integer otpCode = otpService.generateOtp().getOtpCode(); // Get the OTP code
+    OtpRequest otpRequest = new OtpRequest();
+    otpRequest.setIssuedAt(LocalDateTime.now());
+    otpRequest.setOtpCode(otpCode);
+    otpRequest.setExpiration(LocalDateTime.now().plusMinutes(5));
+    emailService.sendOtpEmail(email, "OTP", otpCode.toString());
+    otpService.updateOtpcodeAfterResend(otpRequest, user.getUserId());
+}
 
     @Override
     public void newPassword(PasswordRequest passwordRequest, String email) throws PasswordException {
@@ -111,20 +116,15 @@ public class UserServiceImpl implements UserService {
             throw new PasswordException("Your Password is not match ");
         }
         if(userRepository.findByEmail(email)!= null){
-            String passwordEncode = encoder.encode(passwordRequest.getPassword());
+            String passwordEncode = bCryptPasswordEncoder.encode(passwordRequest.getPassword());
             passwordRequest.setPassword(passwordEncode);
             userRepository.newPassword(passwordRequest,email);
-
         }
-        else
-            throw new PasswordException("Invalid email");
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
-
         return new CustomUserDetail(user);
 
     }

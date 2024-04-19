@@ -12,11 +12,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OtpRequest {
-    private String otpCode ;
+    private Integer otpCode ;
     private LocalDateTime issuedAt;
     private LocalDateTime expiration;
     private Boolean verify;
     private UUID user ;
+
 
 
 }

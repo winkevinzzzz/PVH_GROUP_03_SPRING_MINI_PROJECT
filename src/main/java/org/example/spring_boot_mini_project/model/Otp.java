@@ -16,5 +16,5 @@ public class Otp {
    private LocalDateTime issuedAt;
    private LocalDateTime expiration;
    private boolean verify;
-   private User userId ;
+   private User user ;
 }
