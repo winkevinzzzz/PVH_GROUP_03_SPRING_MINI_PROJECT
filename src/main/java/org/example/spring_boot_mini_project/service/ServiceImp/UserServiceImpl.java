@@ -1,5 +1,4 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
-
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
 import org.example.spring_boot_mini_project.exception.FindNotFoundException;
@@ -18,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

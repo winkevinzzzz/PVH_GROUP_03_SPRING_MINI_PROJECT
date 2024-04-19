@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.spring_boot_mini_project.model.Expense;
 import org.example.spring_boot_mini_project.model.dto.request.ExpenseRequest;
+import org.example.spring_boot_mini_project.model.dto.response.ExpenseResponse;
 import org.example.spring_boot_mini_project.repository.ExpenseRepository;
 import org.example.spring_boot_mini_project.service.ExpenseService;
 import org.springframework.stereotype.Service;
@@ -53,8 +54,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public List<Expense> getAllExpenses() {
-        return null;
+    public List<ExpenseResponse> getAllExpenses(UUID userId) {
+        List<Expense> expenses = expenseRepository.getAllExpense();
+        return ;
     }
 
     @Override

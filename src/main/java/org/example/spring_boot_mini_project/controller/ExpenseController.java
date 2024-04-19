@@ -3,27 +3,37 @@ package org.example.spring_boot_mini_project.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.example.spring_boot_mini_project.model.Expense;
+import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.ExpenseRequest;
+import org.example.spring_boot_mini_project.model.dto.response.ExpenseResponse;
 import org.example.spring_boot_mini_project.service.ExpenseService;
+import org.example.spring_boot_mini_project.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.Authenticator;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/expenses")
-@RequiredArgsConstructor
 public class ExpenseController {
 
     private final ExpenseService expenseService;
+    private final UserService userService;
+
+    public ExpenseController(ExpenseService expenseService, UserService userService) {
+        this.expenseService = expenseService;
+        this.userService = userService;
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> addExpense(@Valid @RequestBody ExpenseRequest expenseRequest) {
@@ -40,6 +50,15 @@ public class ExpenseController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping()
+    public ResponseEntity <?> getAllExpense(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email =authentication.getName();
+        User user = userService.findUserByEmail(email);
+        ExpenseResponse expenseResponse = expenseService.getAllExpenses(user.getUserId());
+
     }
 
 }
