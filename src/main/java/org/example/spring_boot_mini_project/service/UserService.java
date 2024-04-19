@@ -9,10 +9,9 @@ import java.util.UUID;
 
 public interface UserService extends UserDetailsService {
     User createUser(AppUserRequest appUserRequest);
-
     List<User> getAllUser();
-    void verifyAccount(String otpCode);
-    User findUserByEmail(String email);
-    User findUserById(UUID id);
 
+    User findByEmail(String email);
+
+    User findUserById(UUID userId);
 }

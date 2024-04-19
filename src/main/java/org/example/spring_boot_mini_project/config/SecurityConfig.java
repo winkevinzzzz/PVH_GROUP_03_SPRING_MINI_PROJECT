@@ -1,5 +1,4 @@
 package org.example.spring_boot_mini_project.config;
-
 import lombok.AllArgsConstructor;
 import org.example.spring_boot_mini_project.security.JwtAuthEntryPoint;
 import org.example.spring_boot_mini_project.security.JwtAuthFilter;
@@ -11,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -25,18 +23,7 @@ public class SecurityConfig {
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-    // this provider specifies the user details service and password encoder for authentication.
-//    @Bean
-//    DaoAuthenticationProvider authenticationProvider(){
-//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//        authenticationProvider.setUserDetailsService(appUserService);
-//        authenticationProvider.setPasswordEncoder(passwordEncoder);
-//        return authenticationProvider;
-//    }
-//    @Bean
-//    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
         http
@@ -44,10 +31,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers("/api/v1/auths/**", "/v3/api-docs/**",
-                                "/swagger-ui/**", "/api/v1/files/**",
+                                "/swagger-ui/**",
                                 "/swagger-ui.html").permitAll()
-
-
+                        .requestMatchers("/api/v1/files/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**")
+                        .permitAll()
+                        .requestMatchers("/api/v1/category/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntrypoint))
