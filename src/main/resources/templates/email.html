@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+<body>
+    <div style="height: 100% ;width: 100%;
+    background-size: cover;
+    background-position: center; 
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);">
+    <!-- img -->
+    <div style="margin: auto; width: 100px;">
+        <img src="https://static-00.iconduck.com/assets.00/spring-icon-256x256-2efvkvky.png" alt="" style="width: 100%;" >
+    </div>
+    <!-- text -->
+    <h2 style="text-align: center">Expense Tracking Application</h2>
+    <p style="text-align: center">Before you sign in, we need to verify your identify.  Enter the following code on the sign-in page.</p>
+    <!-- box opt -->
+    <div style="height: 75px; width: 200px; background-color: rgba(184, 182, 182, 0.707); margin: 0 auto; text-align: center;">
+        <h1 th:text="${otp}"  style="padding-top: 20px;">X-X-X-X-X-X</h1>
+    </div>
+    <!-- text -->
+    <p style="text-align: center">Welcome to the Expense Tracking Application. Here,  you can monitor your expenses and manage your budget effectively.</p>
+</div>
+
+</body>
+</html>

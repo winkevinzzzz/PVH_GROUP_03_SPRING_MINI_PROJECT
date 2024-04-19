@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
         OtpRequest otp= otpService.generateOtp();
 
         try {
-            emailService.sendOtpEmail(appUserRequest.getEmail(), "OTP", String.valueOf(otp.getOtpCode()));
+            emailService.sendOtpEmail(appUserRequest.getEmail(), "Verify OTP code", String.valueOf(otp.getOtpCode()));
         }
         catch (Exception e) {
 
@@ -68,7 +68,6 @@ public class UserServiceImpl implements UserService {
         otp.setVerify(false);
          otpService.insert(otp);
 
-       // return userRepository.insert(appUserRequest);
        //return modelMapper.map(user,User.class);
         return user;
     }
@@ -126,9 +125,6 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
 
-//        if(user == null){
-//            throw new NotFoundException("could not found user..!!");
-//        }
         return new CustomUserDetail(user);
 
     }

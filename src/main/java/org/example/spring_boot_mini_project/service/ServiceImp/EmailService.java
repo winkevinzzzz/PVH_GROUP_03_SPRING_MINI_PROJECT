@@ -1,37 +1,39 @@
 package org.example.spring_boot_mini_project.service.ServiceImp;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
+
 
 @Service
+
 public class EmailService {
-//    private final JavaMailSender mailSender;
-//
-//    public EmailService(JavaMailSender mailSender) {
-//        this.mailSender = mailSender;
-//    }
 
-//    public void sendNewMail(String to, String subject, String body) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom("retsokhim2001@gmail.com");
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(body);
-//        mailSender.send(message);
-//    }
-@Autowired
-private JavaMailSender javaMailSender;
+    @Autowired
+    private JavaMailSender javaMailSender;
+    @Autowired
+    private TemplateEngine templateEngine;
 
-    public void sendOtpEmail(String recipientEmail, String otp,String body) {
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom("kosalsreyka3@gmail.com"); // Replace with your sender email
-        msg.setTo(recipientEmail);
-        msg.setSubject("Verify your email with opt code");
-        msg.setText("Your OTP is: " + otp);
-        msg.setText(body);
-        javaMailSender.send(msg);
+    public void sendOtpEmail(String recipientEmail, String otp, String body) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+
+        mimeMessageHelper.setFrom("kosalsreyka3@gmail.com");
+        mimeMessageHelper.setTo(recipientEmail);
+        mimeMessageHelper.setSubject(otp);
+        Context context = new Context();
+        context.setVariable("otp", body);
+        String processedString = templateEngine.process("email", context);
+
+        mimeMessageHelper.setText(processedString, true);
+
+        javaMailSender.send(mimeMessage);
     }
 
 }
