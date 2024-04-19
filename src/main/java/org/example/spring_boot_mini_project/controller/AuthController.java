@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
+import org.example.spring_boot_mini_project.exception.PasswordException;
 import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
@@ -43,8 +44,7 @@ public class AuthController {
         this.emailService = emailService;
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest)
-    {
+    public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest) throws PasswordException {
 
         User user= userService.createUser(appUserRequest);
         UserResponse userResponse =new UserResponse();

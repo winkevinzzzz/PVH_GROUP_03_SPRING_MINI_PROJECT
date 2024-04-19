@@ -2,6 +2,7 @@ package org.example.spring_boot_mini_project.service.ServiceImp;
 
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
+import org.example.spring_boot_mini_project.exception.PasswordException;
 import org.example.spring_boot_mini_project.model.CustomUserDetail;
 import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;
@@ -39,7 +40,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User createUser(AppUserRequest appUserRequest) throws EmailSendingException {
+    public User createUser(AppUserRequest appUserRequest) throws EmailSendingException, PasswordException {
+        if(!appUserRequest.getPassword().equals(appUserRequest.getConfirmPassword())){
+            throw new PasswordException("Password must be the same as confirm password");
+        }
 
         // Check for existing email
         Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(appUserRequest.getEmail()));
