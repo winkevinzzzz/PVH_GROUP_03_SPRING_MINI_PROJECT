@@ -1,6 +1,7 @@
 package org.example.spring_boot_mini_project.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
@@ -88,7 +89,7 @@ public class AuthController {
         return ResponseEntity.ok("Your account is verify successful");
     }
     @PostMapping("/resend")
-    public ResponseEntity<?> resendCode(@Valid @RequestParam String email) {
+    public ResponseEntity<?> resendCode(@Valid @RequestParam String email) throws MessagingException {
         User user=userService.findUserByEmail(email);
         OtpRequest otp= otpService.generateOtp();
         if(user!=null)

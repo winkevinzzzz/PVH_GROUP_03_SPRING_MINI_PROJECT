@@ -17,9 +17,7 @@ public class AppUserRequest {
     private String email;
     @NotBlank(message = "Password can't be blank")
     @Size(min = 8, message = "Password must be at least 8 characters long")
-   // @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#$%^&+=!]).{8,}$", message = "Password must contain at least one digit, one letter, and one special character")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@$!%*#?&]{8,}$", message = "password must be at least 8 characters long and include both letters and numbers")
-
     private String password;
     private String confirmPassword;
     @Pattern(regexp = "(?i)(.*\\.(jpg|png|gif|bmp))$", message = "Profile image must be jpg, png, gif, or bmp format.")

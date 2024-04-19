@@ -55,7 +55,11 @@ public class UserServiceImpl implements UserService {
         OtpRequest otp= otpService.generateOtp();
 
         try {
+<<<<<<< HEAD
             emailService.sendMail(appUserRequest.getEmail(), String.valueOf(otp.getOtpCode()));
+=======
+            emailService.sendOtpEmail(appUserRequest.getEmail(), "Verify OTP code", String.valueOf(otp.getOtpCode()));
+>>>>>>> origin/sreyka
         }
         catch (Exception e) {
 
@@ -71,7 +75,6 @@ public class UserServiceImpl implements UserService {
         System.out.println("Otp : " + otp.getUser());
          otpService.insert(otp);
 
-       // return userRepository.insert(appUserRequest);
        //return modelMapper.map(user,User.class);
         return user;
     }
@@ -118,6 +121,7 @@ public class UserServiceImpl implements UserService {
             String passwordEncode = encoder.encode(passwordRequest.getPassword());
             passwordRequest.setPassword(passwordEncode);
             userRepository.newPassword(passwordRequest,email);
+
         }
         else
             throw new PasswordException("Invalid email");
@@ -128,9 +132,6 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
 
-//        if(user == null){
-//            throw new NotFoundException("could not found user..!!");
-//        }
         return new CustomUserDetail(user);
 
     }
