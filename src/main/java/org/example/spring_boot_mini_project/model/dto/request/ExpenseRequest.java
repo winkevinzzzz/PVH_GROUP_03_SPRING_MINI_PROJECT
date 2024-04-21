@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -24,5 +25,6 @@ public class ExpenseRequest {
     private LocalDateTime date;
 
     @NotNull(message = "Category ID is required")
-    private Long category_id;
+    private Long categoryId;
+
 }

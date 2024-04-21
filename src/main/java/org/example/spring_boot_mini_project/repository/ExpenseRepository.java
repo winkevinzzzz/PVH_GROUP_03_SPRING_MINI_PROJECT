@@ -1,26 +1,24 @@
 package org.example.spring_boot_mini_project.repository;
 
 import org.apache.ibatis.annotations.*;
-//import org.example.spring_boot_mini_project.typehandler.LocalDateTimeTypeHandler;
 import org.apache.ibatis.type.LocalDateTimeTypeHandler;
+import org.example.spring_boot_mini_project.model.Expense;
 import org.springframework.stereotype.Repository;
 
-import org.example.spring_boot_mini_project.model.Expense;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Mapper
 @Repository
 public interface ExpenseRepository {
 
-    @Insert("INSERT INTO Expenses (amount, description, date, category_id) " +
+    @Insert("INSERT INTO expenses (amount, description, date, category_id) " +
             "VALUES (#{amount}, #{description}, #{date}, #{category_id})")
-    @Options(useGeneratedKeys = true, keyProperty = "expense_id")
-    void createExpense(Expense expense);
+    @Options(useGeneratedKeys = true, keyProperty = "expenseId")
+    Expense createExpense(Expense expense);
 
-    @Select("SELECT * FROM expenses WHERE expense_id = #{expense_id}")
+    @Select("SELECT * FROM expenses WHERE expense_id = #{id}")
     @Results(id = "expenseResultMap", value = {
             @Result(property = "expenseId", column = "expense_id"),
             @Result(property = "amount", column = "amount"),
@@ -34,9 +32,10 @@ public interface ExpenseRepository {
     void updateExpense(Expense expense);
 
     @Delete("DELETE FROM expenses WHERE expense_id = #{id}")
-    void deleteExpense(Long id);
+    void deleteExpense(UUID id);
 
-    @Select("SELECT * FROM expenses ORDER BY ${orderBy} ${direction} LIMIT #{limit} OFFSET #{offset}")
-    List<Expense> getAllExpense(@Param("offset") int offset, @Param("limit") int limit, @Param("orderBy") String orderBy, @Param("direction") String direction);
+    @Select("SELECT * FROM expenses ORDER BY ${sortBy} ${direction} LIMIT #{limit} OFFSET #{offset}")
+    List<Expense> getAllExpense(@Param("offset") int offset, @Param("limit") int limit, @Param("sortBy") String sortBy, @Param("direction") String direction);
 
+    Expense getExpenseById(UUID id, UUID userId);
 }

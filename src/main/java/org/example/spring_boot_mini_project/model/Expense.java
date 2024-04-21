@@ -6,13 +6,15 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Expense {
 
-    private Long expense_id;
+    private UUID expenseId;
 
     @NotNull(message = "Amount is required")
     private BigDecimal amount;
@@ -24,5 +26,5 @@ public class Expense {
     private LocalDateTime date;
 
     @NotNull(message = "Category ID is required")
-    private Long category_id;
+    private UUID categoryId;
 }

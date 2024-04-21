@@ -29,8 +29,8 @@ public class OtpServiceImpl implements OtpService {
             otpBuilder.append(digit);
         }
         otpRequest.setIssuedAt(LocalDateTime.now());
-        otpRequest.setOtpCode(otpBuilder.toString());
-        otpRequest.setExpiration(LocalDateTime.now().plusMinutes(1));
+        otpRequest.setOtpCode(Integer.valueOf(otpBuilder.toString()));
+        otpRequest.setExpiration(LocalDateTime.now().plusMinutes(5));
         return otpRequest;
     }
 

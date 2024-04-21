@@ -48,5 +48,7 @@ public interface CategoryRepository {
     """)
     @ResultMap("catMapping")
     Category updateCategory(UUID id,@Param("categoryRequest") CategoryRequest categoryRequest, UUID userId);
+
+    Category getCategoryById(Long categoryId, UUID userId);
 }
 
