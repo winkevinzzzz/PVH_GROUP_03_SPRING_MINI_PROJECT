@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 @RestControllerAdvice
 public class GlobalExceptionHandling {
-
+//    in case id negative openapi not show but in console in IDE show error
 
     @ExceptionHandler(FindNotFoundException.class)
     public ProblemDetail handleUserNotFoundException(FindNotFoundException e) {

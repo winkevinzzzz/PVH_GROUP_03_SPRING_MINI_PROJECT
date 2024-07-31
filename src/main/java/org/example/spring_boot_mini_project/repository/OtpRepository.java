@@ -44,7 +44,7 @@ public interface OtpRepository {
             @Result(property = "otpId", column = "otp_id", typeHandler = typeHandler.class),
             @Result(property = "otpCode", column = "otp_code"),  // Use camelCase for property names
             @Result(property = "issuedAt", column = "issued_at"),
-            @Result(property = "userId", column = "user_id",typeHandler = typeHandler.class, one = @One(select = "org.example.spring_boot_mini_project.repository.UserRepository.findById"))
+            @Result(property = "userId",typeHandler = typeHandler.class, column = "user_id", one = @One(select = "org.example.spring_boot_mini_project.repository.UserRepository.findById"))
     })
 
     Otp getOtpByUserId(UUID user);

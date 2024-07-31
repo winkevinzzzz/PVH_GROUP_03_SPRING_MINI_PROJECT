@@ -21,7 +21,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     public OtpRequest generateOtp() {
-        OtpRequest otpRequest= new OtpRequest();
+        OtpRequest otpRequest = new OtpRequest();
         StringBuilder otpBuilder = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < OTP_LENGTH; i++) {
@@ -29,7 +29,7 @@ public class OtpServiceImpl implements OtpService {
             otpBuilder.append(digit);
         }
         otpRequest.setIssuedAt(LocalDateTime.now());
-        otpRequest.setOtpCode(otpBuilder.toString());
+        otpRequest.setOtpCode(Integer.valueOf(otpBuilder.toString()));
         otpRequest.setExpiration(LocalDateTime.now().plusMinutes(5));
         return otpRequest;
     }

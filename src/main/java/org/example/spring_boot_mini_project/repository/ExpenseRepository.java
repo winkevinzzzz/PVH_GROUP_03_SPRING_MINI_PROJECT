@@ -1,13 +1,11 @@
 package org.example.spring_boot_mini_project.repository;
 
-
 import org.apache.ibatis.annotations.*;
-import org.example.spring_boot_mini_project.config.typeHandler;
+import org.apache.ibatis.type.LocalDateTimeTypeHandler;
 import org.example.spring_boot_mini_project.model.Expense;
-import org.example.spring_boot_mini_project.model.dto.request.ExpenseRequest;
-import org.example.spring_boot_mini_project.model.dto.response.ExpenseResponse;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,49 +13,29 @@ import java.util.UUID;
 @Repository
 public interface ExpenseRepository {
 
-    @Insert("INSERT INTO Expenses (amount, description, date, category_id) " +
-            "VALUES (#{amount}, #{description}, #{expenseDate}, #{categoryId})")
+    @Insert("INSERT INTO expenses (amount, description, date, category_id) " +
+            "VALUES (#{amount}, #{description}, #{date}, #{category_id})")
     @Options(useGeneratedKeys = true, keyProperty = "expenseId")
-    void createExpense(ExpenseRequest expense);
+    Expense createExpense(Expense expense);
 
-    @Select("""
-        SELECT * FROM expenses
-        WHERE user_id =#{userID}::uuid
-    """)
-    @Results(id = "expenseMapping", value = {
-            @Result(property = "expenseId",column = "expense_id",typeHandler = typeHandler.class),
-            @Result(property = "amount",column = "amount"),
-            @Result(property = "description",column = "description"),
-            @Result(property = "date",column = "date"),
-            @Result(property = "user",column = "user_id",
-            one = @One(select = "org.example.spring_boot_mini_project.repository.UserRepository.findById")),
-            @Result(property = "category",column = "category_id",one = @One(select = "org.example.spring_boot_mini_project.repository.CategoryRepository.findCategoryById"))
+    @Select("SELECT * FROM expenses WHERE expense_id = #{id}")
+    @Results(id = "expenseResultMap", value = {
+            @Result(property = "expenseId", column = "expense_id"),
+            @Result(property = "amount", column = "amount"),
+            @Result(property = "description", column = "description"),
+            @Result(property = "date", column = "date", javaType = LocalDateTime.class, typeHandler = LocalDateTimeTypeHandler.class),
+            @Result(property = "categoryId", column = "category_id")
     })
-    List<Expense> getAllExpense(UUID userID);
+    Expense getExpenseById(Long id);
 
-    @Select("""
-    INSERT INTO expenses(amount, description, date, user_id, category_id) VALUES (#{expense.amount},#{expense.description},#{expense.date},#{expense.user.userId}::uuid,#{expense.category.categoryID}::uuid) RETURNING *
-    """)
-    @ResultMap("expenseMapping")
-    Expense addExpense(@Param("expense") Expense expense);
+    @Update("UPDATE expenses SET amount = #{amount}, description = #{description}, date = #{date}, category_id = #{category_id} WHERE expense_id = #{id}")
+    void updateExpense(Expense expense);
 
-    @Select("""
-    SELECT * FROM expenses
-    WHERE expense_id =#{id}::UUID AND user_id =#{userId}::UUID
-    """)
-    @ResultMap("expenseMapping")
-    Expense getExpenseById(UUID id , UUID userId);
+    @Delete("DELETE FROM expenses WHERE expense_id = #{id}")
+    void deleteExpense(UUID id);
 
-    @Delete("""
-    DELETE FROM expenses
-    WHERE expense_id =#{id}::UUID AND user_id =#{userId}::UUID
-    """)
-    void deleteExpenseById(UUID id, UUID userId);
+    @Select("SELECT * FROM expenses ORDER BY ${sortBy} ${direction} LIMIT #{limit} OFFSET #{offset}")
+    List<Expense> getAllExpense(@Param("offset") int offset, @Param("limit") int limit, @Param("sortBy") String sortBy, @Param("direction") String direction);
 
-    @Select("""
-    UPDATE expenses SET amount = #{expense.amount}, description = #{expense.description}, date = #{expense.date}, category_id = #{expense.categoryId}::UUID
-    WHERE expense_id = #{id}::uuid RETURNING *
-    """)
-    @ResultMap("expenseMapping")
-    Expense updateExpenseById(UUID id, UUID userId, @Param("expense") ExpenseRequest expenseRequest);
+    Expense getExpenseById(UUID id, UUID userId);
 }

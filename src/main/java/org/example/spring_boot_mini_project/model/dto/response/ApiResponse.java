@@ -18,11 +18,11 @@ public class ApiResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private  String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private T payload;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private HttpStatus status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private LocalDateTime time;
+    private T payload;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer code;
+    private LocalDateTime time;
+
 }

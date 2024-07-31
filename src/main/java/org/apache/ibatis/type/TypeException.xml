@@ -1,0 +1,4 @@
+<insert id="createExpense" parameterType="Expense">
+    INSERT INTO expenses (id, amount, description, category_id)
+    VALUES (#{id}, #{amount}, #{description}, #{categoryId, jdbcType=OTHER})
+</insert>

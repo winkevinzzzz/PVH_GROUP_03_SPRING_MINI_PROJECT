@@ -1,18 +1,15 @@
 package org.example.spring_boot_mini_project.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.example.spring_boot_mini_project.exception.AccountNotVerifiedException;
 import org.example.spring_boot_mini_project.exception.EmailSendingException;
-import org.example.spring_boot_mini_project.exception.PasswordException;
 import org.example.spring_boot_mini_project.model.Otp;
 import org.example.spring_boot_mini_project.model.User;
 import org.example.spring_boot_mini_project.model.dto.request.AppUserRequest;
 import org.example.spring_boot_mini_project.model.dto.request.AuthRequest;
 import org.example.spring_boot_mini_project.model.dto.request.OtpRequest;
-import org.example.spring_boot_mini_project.model.dto.request.PasswordRequest;
 import org.example.spring_boot_mini_project.model.dto.response.ApiResponse;
 import org.example.spring_boot_mini_project.model.dto.response.AuthResponse;
 import org.example.spring_boot_mini_project.model.dto.response.UserResponse;
@@ -46,7 +43,8 @@ public class AuthController {
         this.emailService = emailService;
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest) throws PasswordException {
+    public ResponseEntity<?> register(@Valid @RequestBody AppUserRequest appUserRequest)
+    {
 
         User user= userService.createUser(appUserRequest);
         UserResponse userResponse =new UserResponse();
@@ -57,7 +55,7 @@ public class AuthController {
         return ResponseEntity.ok(userResponse);
     }
     @PostMapping("/login")
-     public ResponseEntity<?> authentication(@Valid @RequestBody AuthRequest authRequest) throws AccountNotVerifiedException, BadRequestException {
+     public ResponseEntity<?> authentication(@Valid @RequestBody AuthRequest authRequest) throws BadRequestException {
         authenticate(authRequest.getEmail(),authRequest.getPassword());
         final UserDetails userDetails= userService.loadUserByUsername(authRequest.getEmail());
         final String token= jwtService.generateToken(userDetails);
@@ -67,20 +65,17 @@ public class AuthController {
 
     private void authenticate(String email, String password) throws BadRequestException {
         UserDetails userDetails= userService.loadUserByUsername(email);
-        User user = userService.findUserByEmail(email);
-        System.out.println("user"+user.getUserId());
-        Otp otp = otpService.getOtpByUserId(user.getUserId());
-        System.out.println("otp"+otp);
-        if (otp==null) {
-            throw new AccountNotVerifiedException("Invalid");
-        } else if(!otp.isVerify()){
+        User user = userService.findByEmail(email);
+        System.out.println(user.toString());
+       Otp otp = otpService.getOtpByUserId(user.getUserId());
+        System.out.println(otp);
+        if(!otp.isVerify()){
             throw new AccountNotVerifiedException("Your account is not verify yet");
         }
         if(userDetails==null)
         {
-            throw new AccountNotVerifiedException("Wrong email");
+            throw new BadRequestException("Wrong email");
         }
-
        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,password));
 
     }
@@ -90,8 +85,8 @@ public class AuthController {
         return ResponseEntity.ok("Your account is verify successful");
     }
     @PostMapping("/resend")
-    public ResponseEntity<?> resendCode(@Valid @RequestParam String email) throws MessagingException {
-        User user=userService.findUserByEmail(email);
+    public ResponseEntity<?> resendCode(@Valid @RequestParam String email) {
+        User user=userService.findByEmail(email);
         OtpRequest otp= otpService.generateOtp();
         if(user!=null)
         {
@@ -102,12 +97,6 @@ public class AuthController {
             throw new EmailSendingException("Invalid email");
 
         return ResponseEntity.ok("Resend otp code successful");
-    }
-    @PutMapping("/forget")
-    public ResponseEntity <?> forgetPassword(@Valid @RequestBody PasswordRequest passwordRequest,@Valid @RequestParam String email) throws PasswordException {
-        System.out.println("pwd"+passwordRequest);
-        userService.newPassword(passwordRequest ,email);
-        return  ResponseEntity.ok("Your password is reset successful");
     }
 
 }

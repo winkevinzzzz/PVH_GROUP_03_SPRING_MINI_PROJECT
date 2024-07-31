@@ -25,6 +25,6 @@ public class ExpenseRequest {
     private LocalDateTime date;
 
     @NotNull(message = "Category ID is required")
-    private UUID categoryId;
-}
+    private Long categoryId;
 
+}
